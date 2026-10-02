@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SalaryPlan</title>
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<header>
+  <h1>SalaryPlan</h1>
+  <input type="month" id="month" aria-label="Choose month">
+</header>
+
+<main>
+  <section class="cards">
+    <div class="card"><span>Income</span><strong id="sumIncome">₦0.00</strong></div>
+    <div class="card"><span>Expenses</span><strong id="sumExpense">₦0.00</strong></div>
+    <div class="card wide"><span>Cash balance this month</span><strong id="sumBalance">₦0.00</strong></div>
+  </section>
+
+  <section>
+    <h2>Add transaction</h2>
+    <form id="txForm">
+      <label>Type
+        <select id="type">
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
+        </select>
+      </label>
+      <label>Amount (₦)
+        <input type="number" id="amount" inputmode="decimal" step="0.01" min="0.01" required placeholder="0.00">
+      </label>
+      <label>Date
+        <input type="date" id="date" required>
+      </label>
+      <label>Category
+        <select id="category"></select>
+      </label>
+      <label>Note (optional)
+        <input type="text" id="note" maxlength="100" placeholder="e.g. Salary for October">
+      </label>
+      <button type="submit" class="primary">Save transaction</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>This month's transactions</h2>
+    <ul id="list" class="list"></ul>
+    <p id="empty" class="muted">No transactions for this month yet. Add your first one above.</p>
+  </section>
+
+  <section>
+    <h2>Backup</h2>
+    <p class="muted">Your data is stored only on this phone. Clearing browser data or uninstalling can erase it. Export a backup regularly and keep the file somewhere safe.</p>
+    <button type="button" id="exportBtn" class="secondary">Export backup</button>
+    <label class="secondary filebtn">Import backup
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </label>
+  </section>
+</main>
+
+<script src="app.js"></script>
+</body>
+</html>
