@@ -95,6 +95,7 @@ function render() {
     list.appendChild(li);
   });
   $("empty").style.display = items.length ? "none" : "block";
+  if (typeof renderBudget === "function") renderBudget(); // CHANGED (new line)
 }
 
 // ---- Events ----
@@ -149,7 +150,7 @@ $("importFile").addEventListener("change", e => {
         category: t.category.slice(0, 50), note: typeof t.note === "string" ? t.note.slice(0, 100) : ""
       }));
       if (!confirm("This will REPLACE your current data with " + good.length + " transactions from the backup. Continue?")) return;
-      data = { version: 1, transactions: good };
+      data = { version: 1, transactions: good, budgets: cleanBudgets(d.budgets) }; // CHANGED
       saveData(); render();
       alert("Backup imported.");
     } catch (err) {
