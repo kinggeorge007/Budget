@@ -7,6 +7,15 @@
 <meta name="theme-color" content="#0b7a4b">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="icon" href="icon-192.png">
+<style>html.locked body > *:not(#lockDlg){visibility:hidden}</style>
+<script>
+try {
+  if (localStorage.getItem("sp_pin")) document.documentElement.classList.add("locked");
+  setTimeout(function () {
+    if (!window.spLockReady) document.documentElement.classList.remove("locked");
+  }, 5000);
+} catch (e) {}
+</script>
 <link rel="stylesheet" href="style.css">
 <link rel="stylesheet" href="theme.css?v=1">
 <link rel="stylesheet" href="theme2.css?v=1">
@@ -86,6 +95,8 @@ window.addEventListener("error", function (e) {
 <script src="home.js?v=1"></script>
 <script src="settings.js?v=1"></script>
 <script src="notes.js?v=2"></script>
+<script src="notetile.js?v=1"></script>
+<script src="lock.js?v=1"></script>
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
