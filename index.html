@@ -63,9 +63,14 @@
   </section>
 </main>
 
+<script>
+window.addEventListener("error", function (e) {
+  alert("Error: " + e.message + " (" + (e.filename || "").split("/").pop() + " line " + e.lineno + ")");
+});
+</script>
 <script src="app.js"></script>
 <script src="budget.js"></script>
 <script src="bills.js"></script>
-<!-- <script src="savings.js"></script> -->
+<script src="savings.js"></script>
 </body>
 </html>
