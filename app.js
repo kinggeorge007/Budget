@@ -34,12 +34,22 @@ function today() {
   const d = new Date();
   return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
 }
+function nowTime() { // CHANGED (new function)
+  const d = new Date();
+  return String(d.getHours()).padStart(2, "0") + ":" + String(d.getMinutes()).padStart(2, "0");
+}
 function niceDate(iso) { const p = iso.split("-"); return p[2] + "/" + p[1] + "/" + p[0]; }
+function niceTime(t) { // CHANGED (new function). Stored as 24-hour HH:MM, shown as 12-hour.
+  const p = t.split(":");
+  const h = Number(p[0]);
+  return String(h % 12 || 12).padStart(2, "0") + ":" + p[1] + " " + (h >= 12 ? "PM" : "AM");
+}
 function newId() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
 
 const $ = id => document.getElementById(id);
 $("month").value = today().slice(0, 7);
 $("date").value = today();
+$("time").value = nowTime(); // CHANGED
 
 function fillCategories() {
   const sel = $("category");
@@ -56,7 +66,7 @@ function render() {
   const month = $("month").value;
   const items = data.transactions
     .filter(t => t.date.startsWith(month))
-    .sort((a, b) => b.date.localeCompare(a.date));
+    .sort((a, b) => b.date.localeCompare(a.date) || (b.time || "").localeCompare(a.time || "")); // CHANGED
 
   let income = 0, expense = 0;
   items.forEach(t => { if (t.type === "income") income += t.amount; else expense += t.amount; });
@@ -74,7 +84,7 @@ function render() {
     title.textContent = t.category;
     const meta = document.createElement("span");
     meta.className = "meta";
-    meta.textContent = niceDate(t.date) + (t.note ? " · " + t.note : "");
+    meta.textContent = niceDate(t.date) + (t.time ? " " + niceTime(t.time) : "") + (t.note ? " · " + t.note : ""); // CHANGED
     info.append(title, meta);
 
     const amt = document.createElement("span");
@@ -95,7 +105,7 @@ function render() {
     list.appendChild(li);
   });
   $("empty").style.display = items.length ? "none" : "block";
-  if (typeof renderBudget === "function") renderBudget(); // CHANGED (new line)
+  if (typeof renderBudget === "function") renderBudget();
 }
 
 // ---- Events ----
@@ -111,11 +121,13 @@ $("txForm").addEventListener("submit", e => {
     type: $("type").value,
     amount: kobo,
     date: $("date").value,
+    time: $("time").value, // CHANGED
     category: $("category").value,
     note: $("note").value.trim()
   });
   saveData();
   $("amount").value = ""; $("note").value = "";
+  $("time").value = nowTime(); // CHANGED
   $("month").value = $("date").value.slice(0, 7);
   render();
 });
@@ -147,10 +159,14 @@ $("importFile").addEventListener("change", e => {
       if (!d || !Array.isArray(d.transactions)) throw new Error("bad file");
       const good = d.transactions.filter(validTx).map(t => ({
         id: t.id, type: t.type, amount: t.amount, date: t.date,
+        time: typeof t.time === "string" && /^\d{2}:\d{2}$/.test(t.time) ? t.time : "", // CHANGED
         category: t.category.slice(0, 50), note: typeof t.note === "string" ? t.note.slice(0, 100) : ""
       }));
       if (!confirm("This will REPLACE your current data with " + good.length + " transactions from the backup. Continue?")) return;
-      datadata = { version: 1, transactions: good, budgets: cleanBudgets(d.budgets), bills: cleanBills(d.bills), billPayments: cleanPayments(d.billPayments) };
+      const extras = {}; // CHANGED (next 4 lines)
+      if (typeof cleanBudgets === "function") extras.budgets = cleanBudgets(d.budgets);
+      if (typeof cleanBills === "function") { extras.bills = cleanBills(d.bills); extras.billPayments = cleanPayments(d.billPayments); }
+      data = Object.assign({ version: 1, transactions: good }, extras);
       saveData(); render();
       alert("Backup imported.");
     } catch (err) {
