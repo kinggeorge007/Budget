@@ -211,7 +211,8 @@ function renderBills() {
         const tx = {
           id: newId(), type: "expense", amount: b.amount,
           date: today().startsWith(month) ? today() : due,
-          category: b.category, note: b.name + " (bill)"
+          category: b.category, note: b.name + " (bill)",
+          time: today().startsWith(month) ? nowTime() : ""
         };
         data.transactions.push(tx);
         if (!data.billPayments[month]) data.billPayments[month] = {};
