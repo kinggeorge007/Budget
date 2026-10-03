@@ -8,8 +8,9 @@ addStyle.textContent =
   "#fab{position:fixed;right:16px;bottom:78px;z-index:11;width:56px;height:56px;min-height:0;padding:0;border:0;border-radius:50%;background:linear-gradient(135deg,#0b6b43,#10a066);color:#fff;font-size:2rem;line-height:1;box-shadow:0 4px 14px rgba(0,0,0,.35)}";
 document.head.appendChild(addStyle);
 
-// Find the old "Add transaction" section before moving the form out of it.
-const addSection = $("txForm").closest("section");
+// Keep direct references, because the form leaves the page's main area when we move it.
+const addForm = $("txForm");
+const addSection = addForm.closest("section");
 
 const addDlg = document.createElement("dialog");
 addDlg.id = "addDlg";
@@ -17,15 +18,15 @@ const addTitle = document.createElement("h2");
 addTitle.textContent = "Add transaction";
 addTitle.style.margin = "0 0 12px";
 addDlg.appendChild(addTitle);
-addDlg.appendChild($("txForm"));
+addDlg.appendChild(addForm);
+document.body.appendChild(addDlg);
 
 const addCancel = document.createElement("button");
 addCancel.type = "button";
 addCancel.className = "secondary";
 addCancel.textContent = "Cancel";
 addCancel.onclick = () => addDlg.close();
-$("txForm").appendChild(addCancel);
-document.body.appendChild(addDlg);
+addForm.appendChild(addCancel);
 
 // The old section is now empty, so remove it from the Home tab.
 TABS[0].parts = TABS[0].parts.filter(p => p !== addSection);
@@ -44,6 +45,6 @@ fab.onclick = () => {
 document.body.appendChild(fab);
 
 // Close the pop-up after a successful save (the amount box is cleared on success).
-$("txForm").addEventListener("submit", () => {
+addForm.addEventListener("submit", () => {
   if ($("amount").value === "") addDlg.close();
 });
