@@ -1,0 +1,65 @@
+:root {
+  --bg: #f6f8f7; --card: #ffffff; --text: #14231c; --muted: #6b7d73;
+  --accent: #00a862; --accent2: #00b36b; --danger: #e0454b; --line: #e8eeeb;
+  --mint: #e3f6ec; --shadow: 0 1px 4px rgba(0, 0, 0, .06);
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #0d1512; --card: #15211c; --text: #e8f3ed; --muted: #93a89d;
+    --accent: #2fd08a; --accent2: #2fd08a; --danger: #ff7b7f; --line: #22332b;
+    --mint: #173326; --shadow: 0 1px 4px rgba(0, 0, 0, .35);
+  }
+}
+
+header {
+  background: var(--bg); color: var(--text); box-shadow: none;
+  border-bottom: 1px solid var(--line);
+}
+header h1 { color: var(--accent); }
+header input {
+  background: var(--card); color: var(--text); color-scheme: light dark;
+  border: 1px solid var(--line); border-radius: 999px; padding: 0 14px;
+}
+
+/* Balance card first, then income and expenses */
+.card.wide {
+  order: -1; position: relative; border-radius: 20px; padding: 18px;
+  background: linear-gradient(135deg, #00b36b, #009a5c);
+}
+.card.wide strong { font-size: 2rem; letter-spacing: .3px; }
+#eyeBtn {
+  position: absolute; top: 10px; right: 10px; width: 44px; height: 44px; min-height: 0;
+  padding: 0; border: 0; background: rgba(255, 255, 255, .18); color: #fff;
+  border-radius: 50%; display: flex; align-items: center; justify-content: center;
+}
+#eyeBtn svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+.card { box-shadow: var(--shadow); border-radius: 18px; }
+h2::before { background: var(--accent2); }
+
+/* Quick action tiles */
+.qa {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px 4px;
+  background: var(--card); border-radius: 20px; padding: 18px 6px;
+  box-shadow: var(--shadow); margin: 14px 0;
+}
+.qa button {
+  background: transparent; border: 0; display: flex; flex-direction: column; align-items: center;
+  gap: 6px; font-size: .72rem; font-weight: 500; color: var(--text); padding: 0; min-height: 0;
+}
+.qa .ic {
+  width: 50px; height: 50px; border-radius: 16px; background: var(--mint); color: var(--accent);
+  display: flex; align-items: center; justify-content: center;
+}
+.qa svg { width: 24px; height: 24px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+/* Bottom tab bar */
+#tabBar { background: var(--card); box-shadow: none; border-top: 1px solid var(--line); }
+#tabBar button { color: var(--muted); font-weight: 500; }
+#tabBar button.on { color: var(--accent); font-weight: 700; }
+#tabBar .tabIc { width: 48px; height: 30px; border-radius: 15px; display: flex; align-items: center; justify-content: center; }
+#tabBar button.on .tabIc { background: var(--mint); }
+#tabBar svg { width: 22px; height: 22px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+.primary { background: var(--accent2); box-shadow: none; }
+#fab { background: var(--accent2); }
+.list li, .bRow, .bTotals, .chartBox { border-radius: 16px; box-shadow: var(--shadow); }
