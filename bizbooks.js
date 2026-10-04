@@ -371,4 +371,80 @@ if (typeof wsEntry !== "undefined" && wsEntry) {
         bar.appendChild(cb("Mark paid today", "secondary", () => {
           if (!confirm("Record this as " + (inv ? "income (Customer payments)" : "an expense (" + (d.cat || "Other") + ")") + " paid today?")) return;
           const tx = { id: newId(), type: inv ? "income" : "expense", amount: d.amount, date: today(), time: nowTime(),
-            category: inv ? "Customer payments" : (d.cat || "Other"), note: d.party + (inv ? " (invoice payment)" : " (suppli
+            category: inv ? "Customer payments" : (d.cat || "Other"), note: d.party + (inv ? " (invoice payment)" : " (supplier bill)") };
+          data.transactions.push(tx);
+          bkMeta()[tx.id] = acct.value;
+          d.paid = true; d.paidDate = today(); d.tx = tx.id;
+          saveData(); render(); again();
+        }));
+        bar.appendChild(cb("Delete", "secondary", () => {
+          if (!confirm("Delete this " + (inv ? "invoice" : "bill") + "?")) return;
+          data.budgets._docs = bkDocs().filter(x => x.id !== d.id);
+          saveData(); again();
+        }));
+      } else {
+        bar.appendChild(cb("Mark unpaid", "secondary", () => {
+          if (!confirm("Mark as unpaid? This also removes the transaction recorded for the payment.")) return;
+          data.transactions = data.transactions.filter(t => t.id !== d.tx);
+          delete bkMeta()[d.tx];
+          d.paid = false; d.paidDate = ""; d.tx = "";
+          saveData(); render(); again();
+        }));
+      }
+      r.appendChild(bar);
+      body.appendChild(r);
+    });
+  }
+
+  function catsPage(body) {
+    const c = bkData()._cats = bkData()._cats || { income: [], expense: [] };
+    body.appendChild(mkEl("p", "muted", "Your own categories are added to the built-in ones. Removing a category does not change old transactions."));
+    ["income", "expense"].forEach(k => {
+      const cd = card(body, k === "income" ? "Your income categories" : "Your expense categories", []);
+      if (!c[k].length) cd.appendChild(mkEl("p", "muted", "None yet."));
+      c[k].forEach(name => {
+        const row = mkEl("div", "pRow");
+        row.append(mkEl("span", "", name), cb("Remove", "secondary", () => {
+          c[k] = c[k].filter(x => x !== name);
+          saveData(); applyCats(); openPage("Categories", catsPage);
+        }));
+        cd.appendChild(row);
+      });
+    });
+    const typeSel = mkSel([["income", "Income"], ["expense", "Expense"]]);
+    const nm = mkIn("text", "", "e.g. Delivery fees");
+    nm.maxLength = 50;
+    body.append(fld("Type", typeSel), fld("New category", nm));
+    const add = cb("Add category", "primary", () => {
+      const name = nm.value.trim().slice(0, 50);
+      if (!name) { alert("Please enter a name."); return; }
+      if (CATEGORIES.income.includes(name) || CATEGORIES.expense.includes(name)) { alert("That category already exists."); return; }
+      c[typeSel.value].push(name);
+      saveData(); applyCats(); openPage("Categories", catsPage);
+    });
+    add.style.width = "100%";
+    body.appendChild(add);
+  }
+
+  // ---- Home tile and menu item ----
+  (function () {
+    const b = document.createElement("button");
+    b.type = "button";
+    const ic = mkEl("span", "ic");
+    ic.innerHTML = svgIcon("bills");
+    b.append(ic, mkEl("span", "", "Books"));
+    b.onclick = () => openPage("Books", booksPage);
+    qa.appendChild(b);
+    const item = mkEl("button", "dItem");
+    item.type = "button";
+    const mi = mkEl("span", "ic");
+    mi.innerHTML = svgIcon("bills");
+    item.append(mi, mkEl("span", "", "Business books"));
+    item.onclick = () => openPage("Books", booksPage);
+    drawer.insertBefore(item, drawer.querySelectorAll(".dItem")[1] || drawer.querySelector(".dFoot"));
+  })();
+
+  applyCats();
+  fillAcctSel();
+  render();
+}
