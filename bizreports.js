@@ -165,4 +165,4 @@ if (typeof wsEntry !== "undefined" && wsEntry) {
   item.append(mi, mkEl("span", "", "Business reports"));
   item.onclick = () => openPage("Business reports", bizReportsPage);
   drawer.insertBefore(item, drawer.querySelectorAll(".dItem")[2] || drawer.querySelector(".dFoot"));
-                                }
+}
