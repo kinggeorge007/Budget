@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SalaryPlan</title>
+<meta name="theme-color" content="#0b7a4b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon-192.png">
+<style>html.locked body > *:not(#lockDlg){visibility:hidden}</style>
+<script>
+try {
+  if (localStorage.getItem("sp_pin")) document.documentElement.classList.add("locked");
+  setTimeout(function () {
+    if (!window.spLockReady) document.documentElement.classList.remove("locked");
+  }, 5000);
+} catch (e) {}
+</script>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="theme.css?v=1">
+<link rel="stylesheet" href="theme2.css?v=1">
+</head>
+<body>
+<header>
+  <h1>SalaryPlan</h1>
+  <input type="month" id="month" aria-label="Choose month">
+</header>
+
+<main>
+  <section class="cards">
+    <div class="card"><span>Income</span><strong id="sumIncome">₦0.00</strong></div>
+    <div class="card"><span>Expenses</span><strong id="sumExpense">₦0.00</strong></div>
+    <div class="card wide"><span>Cash balance this month</span><strong id="sumBalance">₦0.00</strong></div>
+  </section>
+
+  <section>
+    <h2>Add transaction</h2>
+    <form id="txForm">
+      <label>Type
+        <select id="type">
+          <option value="expense">Expense</option>
+          <option value="income">Income</option>
+        </select>
+      </label>
+      <label>Amount (₦)
+        <input type="number" id="amount" inputmode="decimal" step="0.01" min="0.01" required placeholder="0.00">
+      </label>
+      <label>Date
+        <input type="date" id="date" required>
+      </label>
+      <label>Time
+        <input type="time" id="time">
+      </label>
+      <label>Category
+        <select id="category"></select>
+      </label>
+      <label>Note (optional)
+        <input type="text" id="note" maxlength="100" placeholder="e.g. Salary for October">
+      </label>
+      <button type="submit" class="primary">Save transaction</button>
+    </form>
+  </section>
+
+  <section>
+    <h2>This month's transactions</h2>
+    <ul id="list" class="list"></ul>
+    <p id="empty" class="muted">No transactions for this month yet. Add your first one above.</p>
+  </section>
+
+  <section>
+    <h2>Backup</h2>
+    <p class="muted">Your data is stored only on this phone. Clearing browser data or uninstalling can erase it. Export a backup regularly and keep the file somewhere safe.</p>
+    <button type="button" id="exportBtn" class="secondary">Export backup</button>
+    <label class="secondary filebtn">Import backup
+      <input type="file" id="importFile" accept="application/json,.json" hidden>
+    </label>
+  </section>
+</main>
+
+<script>
+window.addEventListener("error", function (e) {
+  alert("Error: " + e.message + " (" + (e.filename || "").split("/").pop() + " line " + e.lineno + ")");
+});
+</script>
+<script src="app.js?v=10"></script>
+<script src="budget.js?v=10"></script>
+<script src="bills.js?v=9"></script>
+<script src="savings.js?v=9"></script>
+<script src="reports.js?v=1"></script>
+<script src="edit.js?v=1"></script>
+<script src="balance.js?v=1"></script>
+<script src="tabs.js?v=1"></script>
+<script src="charts.js?v=1"></script>
+<script src="addtx.js?v=2"></script>
+<script src="home.js?v=1"></script>
+<script src="settings.js?v=1"></script>
+<script src="notes.js?v=2"></script>
+<script src="notetile.js?v=1"></script>
+<script src="lock.js?v=1"></script>
+<script src="welcome.js?v=2"></script>
+<script src="tools.js?v=1"></script>
+<script src="hometiles.js?v=1"></script>
+<script src="currency.js?v=1"></script>
+<script src="cardlist.js?v=1"></script>
+<script src="calcfull.js?v=1"></script>
+<script src="calchistory.js?v=1"></script>
+<script src="calendar.js?v=1"></script>
+<script src="workspace.js?v=1"></script>
+<script src="bizbooks.js?v=1"></script>
+<script src="bizreports.js?v=1"></script>
+<script>
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", function () {
+    navigator.serviceWorker.register("sw.js");
+  });
+}
+</script>
+</body>
+</html>
