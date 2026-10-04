@@ -256,3 +256,14 @@ if (!lsGet("sp_welcomed")) {
   if (getRec()) lsSet("sp_welcomed", "1"); // existing PIN users skip it
   else welDlg.showModal();
                     }
+// ---- "Welcome tour" in the slide-out menu, so the welcome screen can be reopened ----
+const welItem = mkEl("button", "dItem");
+welItem.type = "button";
+const welIc = mkEl("span", "ic");
+welIc.innerHTML = svgIcon("home");
+welItem.append(welIc, mkEl("span", "", "Welcome tour"));
+welItem.onclick = () => {
+  closeDrawer();
+  if (!welDlg.open) welDlg.showModal();
+};
+drawer.insertBefore(welItem, drawer.querySelector(".dFoot"));
