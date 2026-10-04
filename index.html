@@ -82,7 +82,7 @@ window.addEventListener("error", function (e) {
   alert("Error: " + e.message + " (" + (e.filename || "").split("/").pop() + " line " + e.lineno + ")");
 });
 </script>
-<script src="app.js?v=9"></script>
+<script src="app.js?v=10"></script>
 <script src="budget.js?v=10"></script>
 <script src="bills.js?v=9"></script>
 <script src="savings.js?v=9"></script>
@@ -104,6 +104,8 @@ window.addEventListener("error", function (e) {
 <script src="cardlist.js?v=1"></script>
 <script src="calcfull.js?v=1"></script>
 <script src="calchistory.js?v=1"></script>
+<script src="calendar.js?v=1"></script>
+<script src="workspace.js?v=1"></script>
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
