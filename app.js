@@ -1,6 +1,6 @@
 "use strict";
 
-const KEY = "salaryplan_data_v1";
+const KEY = (window.SP_PATCHED = true, localStorage.getItem("sp_data_key") || "salaryplan_data_v1");
 const CATEGORIES = {
   expense: ["Rent", "Food", "Transport", "Electricity", "Internet", "School fees", "Family support", "Subscriptions", "Other"],
   income: ["Salary", "Bonus", "Business income", "Other"]
