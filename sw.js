@@ -1,7 +1,7 @@
 "use strict";
-const CACHE = "salaryplan-v1";
+const CACHE = "salaryplan-v2";
 const FILES = [
-  "./", "index.html", "style.css", "app.js", "budget.js", "bills.js",
+  "./", "index.html", "style.css", "theme.css", "theme2.css", "theme3.css", "app.js", "budget.js", "bills.js",
   "savings.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"
 ];
 
