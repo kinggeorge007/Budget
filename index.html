@@ -3,11 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SalaryPlan</title>
-<meta name="theme-color" content="#0b7a4b">
+<title>Budget</title>
+<meta name="description" content="Simple budgeting for individuals and businesses">
+<meta name="theme-color" content="#FFFFFF">
 <link rel="manifest" href="manifest.webmanifest">
-<link rel="icon" href="icon-192.png">
-<style>html.locked body > *:not(#lockDlg){visibility:hidden}</style>
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<style>
+:root{--bg:#FFFFFF;--card:#FFFFFF;--text:#171717;--muted:#777777;--line:#EAEAEA;--accent:#171717;--accent2:#171717;--danger:#D97979}
+html,body{background:#FFFFFF;color:#171717}
+html.locked body > *:not(#lockDlg){visibility:hidden}
+</style>
 <script>
 try {
   if (localStorage.getItem("sp_pin")) document.documentElement.classList.add("locked");
@@ -17,12 +24,10 @@ try {
 } catch (e) {}
 </script>
 <link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="theme.css?v=1">
-<link rel="stylesheet" href="theme2.css?v=1">
 </head>
 <body>
 <header>
-  <h1>SalaryPlan</h1>
+  <h1>Budget</h1>
   <input type="month" id="month" aria-label="Choose month">
 </header>
 
@@ -30,7 +35,7 @@ try {
   <section class="cards">
     <div class="card"><span>Income</span><strong id="sumIncome">₦0.00</strong></div>
     <div class="card"><span>Expenses</span><strong id="sumExpense">₦0.00</strong></div>
-    <div class="card wide"><span>Cash balance this month</span><strong id="sumBalance">₦0.00</strong></div>
+    <div class="card wide"><span>Cash balance</span><strong id="sumBalance">₦0.00</strong></div>
   </section>
 
   <section>
@@ -62,9 +67,9 @@ try {
   </section>
 
   <section>
-    <h2>This month's transactions</h2>
+    <h2>Transactions</h2>
     <ul id="list" class="list"></ul>
-    <p id="empty" class="muted">No transactions for this month yet. Add your first one above.</p>
+    <p id="empty" class="muted">Nothing yet this month. Tap + to add your first transaction.</p>
   </section>
 
   <section>
@@ -108,6 +113,8 @@ window.addEventListener("error", function (e) {
 <script src="workspace.js?v=1"></script>
 <script src="bizbooks.js?v=1"></script>
 <script src="bizreports.js?v=1"></script>
+<script src="minimal.js?v=1"></script>
+<script src="minchart.js?v=1"></script>
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
@@ -115,5 +122,6 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
+<link rel="stylesheet" href="minimal.css?v=1">
 </body>
 </html>

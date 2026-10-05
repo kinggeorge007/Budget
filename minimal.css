@@ -1,0 +1,145 @@
+/* Budget: minimalist design system. Loaded last, so it overrides every older style. */
+:root,:root[data-theme="light"],:root[data-theme="dark"]{
+  --bg:#FFFFFF;--surface:#FFFFFF;--surface-secondary:#F7F7F5;
+  --text:#171717;--text-secondary:#777777;--border:#EAEAEA;
+  --accent-orange:#E9A36A;--accent-red:#D97979;--accent-green:#83B89A;--accent-teal:#73B9B2;--accent-indigo:#9298D5;
+  /* names used by older components, mapped onto the new palette */
+  --card:#FFFFFF;--muted:#777777;--line:#EAEAEA;--mint:#F7F7F5;
+  --accent:#171717;--accent2:#171717;--danger:#D97979;--shadow:none;
+  color-scheme:light;
+}
+*{-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg) !important;color:var(--text)}
+body{font-family:-apple-system,"Inter","Segoe UI",Roboto,system-ui,sans-serif;font-weight:400;font-size:15px;letter-spacing:-.005em}
+strong,b,h1,h2,h3,th{font-weight:500}
+button{font-weight:400}
+h2::before{display:none !important}
+main{max-width:560px;padding:0 20px 120px}
+main h2{display:block;font-size:.8rem;font-weight:500;color:var(--text-secondary);text-transform:none;letter-spacing:0;margin:30px 0 6px}
+.muted{color:var(--text-secondary) !important}
+
+/* ---- Header ---- */
+header{position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;background:#fff !important;color:var(--text) !important;box-shadow:none !important;border:0 !important;padding:12px 16px}
+.brand{display:flex;align-items:center;gap:10px}
+.brandLogo{width:30px;height:30px;flex:none}
+header h1{font-size:1.15rem;font-weight:500;color:var(--text) !important;letter-spacing:-.01em;max-width:42vw}
+#menuBtn,#drawer,#drawerBg{display:none !important}
+.hdrRight{display:flex;align-items:center;gap:6px}
+header #month{background:#fff !important;color:var(--text) !important;border:1px solid var(--text) !important;border-radius:999px !important;min-height:38px;padding:0 12px;font-size:.85rem;font-weight:400;color-scheme:light}
+#gearBtn{width:40px;height:40px;min-height:0;padding:0;border:0;background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center}
+.wsTag{background:var(--accent-orange) !important;font-weight:500;letter-spacing:0}
+
+/* ---- Balance, income and expenses ---- */
+.cards{display:grid;grid-template-columns:1fr 1fr;gap:6px 12px;margin-top:8px;text-align:center}
+.card{background:transparent !important;border:0 !important;box-shadow:none !important;border-radius:0 !important;padding:8px 0 !important;align-items:center}
+.card span{font-size:.78rem !important;text-transform:none !important;letter-spacing:0 !important;color:var(--text-secondary) !important;font-weight:400}
+.card strong{font-size:1.25rem !important;font-weight:500 !important}
+.card.wide{order:-1;grid-column:1/-1;position:relative;padding:22px 0 12px !important;background:transparent !important}
+.card.wide strong{font-size:2.6rem !important;color:var(--text) !important;letter-spacing:-.02em}
+#sumIncome{color:var(--accent-green) !important}
+#sumExpense{color:var(--accent-red) !important}
+.card.tap::after{display:none}
+#eyeBtn{position:absolute !important;top:14px !important;right:0 !important;width:40px !important;height:40px !important;min-height:0;padding:0;border:0 !important;background:transparent !important;color:var(--text-secondary) !important;display:flex;align-items:center;justify-content:center}
+#eyeBtn svg{width:20px;height:20px;stroke:currentColor;fill:none;stroke-linecap:round;stroke-linejoin:round}
+
+/* ---- Old shortcut grid, floating button and old charts are replaced ---- */
+.qa,#fab{display:none !important}
+
+/* ---- Rows, lists and cards ---- */
+.list{gap:0 !important}
+.list li{background:transparent !important;border:0 !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;box-shadow:none !important;padding:14px 0 !important}
+.list .info strong{font-weight:400}
+.list .meta{font-size:.78rem;color:var(--text-secondary)}
+.list .amt{font-weight:500}
+.income{color:var(--accent-green) !important}
+.expense{color:var(--accent-red) !important}
+.del,.editBtn{color:var(--text-secondary) !important;font-weight:400;font-size:.78rem;min-width:0 !important;padding:0 8px !important}
+.cdt{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:8px}
+.bRow,.bTotals,.calItem,.nItem,.chItem,.toolRow,.wsRow,.hxItem{background:transparent !important;border:0 !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;box-shadow:none !important;padding:14px 0 !important;margin-bottom:0 !important}
+.pCard{background:var(--surface-secondary) !important;border:0 !important;border-radius:14px !important;box-shadow:none !important}
+form{background:transparent !important;border:0 !important;box-shadow:none !important;padding:0 !important}
+.bar{height:3px !important;border-radius:2px !important;background:var(--border) !important}
+.bar div{background:var(--text) !important}
+.bRow.ok .bar div{background:var(--accent-green) !important}
+.bRow.near .bar div{background:var(--accent-orange) !important}
+.bRow.over .bar div{background:var(--accent-red) !important}
+.bRow.near .bInfo{color:var(--accent-orange) !important;font-weight:400}
+.bRow.over .bInfo{color:var(--accent-red) !important;font-weight:400}
+.bRow.ok,.bRow.near,.bRow.over{border-left:0 !important}
+.rScroll{border:0 !important;box-shadow:none !important}
+.rBlock table{border:0 !important;background:transparent !important}
+.rBlock th{background:transparent !important;color:var(--text-secondary);font-weight:400;text-transform:none;letter-spacing:0}
+.rBlock td{border-bottom:1px solid var(--border)}
+.nLink{background:var(--surface-secondary) !important;color:var(--text) !important;font-weight:500}
+.nText,.calcDisp{background:transparent !important;box-shadow:none !important}
+
+/* ---- Buttons and fields ---- */
+.primary{background:var(--text) !important;color:#fff !important;border:0 !important;border-radius:999px !important;box-shadow:none !important;font-weight:500}
+.secondary{background:transparent !important;color:var(--text) !important;border:1px solid var(--border) !important;border-radius:999px !important;box-shadow:none !important}
+.pOpts button{border-radius:999px !important;font-weight:400}
+.pOpts button.on{background:var(--text) !important;border-color:var(--text) !important;color:#fff !important}
+input,select,textarea{background:#fff !important;color:var(--text) !important;border:1px solid var(--border) !important;border-radius:12px !important;font-weight:400}
+input:focus,select:focus,textarea:focus{outline:none !important;border-color:var(--text) !important}
+label{color:var(--text-secondary) !important;font-weight:400 !important;font-size:.8rem}
+
+/* ---- Calendar ---- */
+.k-paid{background:var(--accent-green)}.k-overdue{background:var(--accent-red)}.k-upcoming{background:var(--accent-orange)}.k-unpaid{background:#B8B8B8}
+.k-income{background:var(--accent-green)}.k-expense{background:var(--accent-red)}.k-saving{background:var(--accent-teal)}.k-goal{background:var(--accent-indigo)}.k-event{background:var(--text)}
+.chip{font-weight:500}
+.calDay{background:transparent !important;border-radius:50% !important;font-weight:400}
+.calDay.sel{background:var(--text) !important;color:#fff}
+.calDay.today{outline:1px solid var(--text)}
+
+/* ---- Dialogs and pages ---- */
+dialog{background:#fff !important;color:var(--text)}
+dialog::backdrop{background:rgba(23,23,23,.35)}
+#lockDlg::backdrop{background:#fff}
+#addDlg,#editDlg{border:0 !important;border-radius:20px !important;box-shadow:none !important}
+.pHead{background:#fff !important;border-bottom:1px solid var(--border) !important}
+.pHead h2{font-size:1rem;font-weight:500;color:var(--text)}
+.dItem .ic,.toolRow .ic{background:transparent !important;color:var(--text) !important}
+.wsAv{background:var(--surface-secondary) !important;color:var(--text) !important;font-weight:500}
+.welLogo{background:transparent !important;width:64px;height:64px;border-radius:0}
+.lockBrand{color:var(--text) !important;font-weight:500}
+
+/* ---- Calculator and PIN keypad ---- */
+.calcGrid button,.padGrid button{background:var(--surface-secondary) !important;color:var(--text) !important;box-shadow:none !important;font-weight:400 !important;border-radius:999px !important}
+.calcGrid .op{color:var(--accent-orange) !important}
+.calcGrid .eq{background:var(--text) !important;color:#fff !important}
+.calcGrid .fn{color:var(--accent-red) !important}
+.calcRes{font-weight:400}
+.padDots span{border-color:var(--text)}
+.padDots span.on{background:var(--text)}
+.padMsg{color:var(--accent-red)}
+
+/* ---- Bottom navigation ---- */
+#tabBar{background:#fff !important;border-top:1px solid var(--border) !important;box-shadow:none !important;align-items:center;padding-bottom:env(safe-area-inset-bottom,0)}
+#tabBar button{color:var(--text-secondary) !important;font-weight:400 !important;font-size:.68rem !important;min-height:60px;gap:2px}
+#tabBar button.on{color:var(--text) !important;font-weight:500 !important}
+#tabBar button.on::after{content:"";width:4px;height:4px;border-radius:50%;background:var(--accent-orange);margin-top:1px}
+#tabBar .tabIc,#tabBar button.on .tabIc{display:flex;align-items:center;justify-content:center;width:auto;height:26px;background:transparent !important}
+#tabBar svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+#tabBar .plusBtn{flex:none;width:52px;height:52px;min-height:0;margin:0 8px;padding:0;border:0;border-radius:50%;background:var(--text) !important;color:#fff !important;display:flex;align-items:center;justify-content:center}
+#tabBar .plusBtn svg{width:24px;height:24px}
+
+/* ---- More screen ---- */
+.moreGrp{font-size:.75rem;font-weight:500;color:var(--text-secondary);margin:22px 0 4px}
+.moreRow{display:flex;align-items:center;gap:14px;width:100%;min-height:52px;padding:0;background:transparent !important;border:0 !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;color:var(--text);font-size:1rem;font-weight:400;text-align:left}
+.moreRow .ic{display:flex}
+.moreRow svg{width:20px;height:20px;fill:none;stroke:currentColor;stroke-linecap:round;stroke-linejoin:round}
+.moreRow .chev{margin-left:auto;color:var(--text-secondary)}
+
+/* ---- Home chart ---- */
+.mcSvg{width:100%;height:auto;display:block}
+.mcLegend{display:flex;gap:14px;font-size:.75rem;color:var(--text-secondary);margin:6px 0 4px}
+.mcLegend i{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px}
+.mcRow{display:flex;justify-content:space-between;gap:12px;margin-top:14px;font-size:.9rem}
+.mcBar{height:3px;background:var(--border);border-radius:2px;margin-top:6px}
+.mcBar i{display:block;height:100%;border-radius:2px}
+
+/* ---- Icons: one thin outline style everywhere ---- */
+svg[viewBox="0 0 24 24"]{stroke-width:1.5 !important}
+
+/* ---- Business workspace stays quiet ---- */
+.ws-biz .primary{background:var(--text) !important}
+.ws-biz .card.wide{background:transparent !important}
