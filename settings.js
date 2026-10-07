@@ -1,7 +1,7 @@
 "use strict";
 // SalaryPlan Stage 13: slide-out menu with Settings, Backup, How to use, Privacy and About.
 
-const APP_VERSION = "1.0.0";
+const APP_VERSION = "1.1.0";
 
 // ---- Extra icons (reuses the icon helper from home.js) ----
 ICONS.menu = '<line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>';

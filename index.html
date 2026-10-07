@@ -94,7 +94,18 @@ try {
 
 <script>
 window.addEventListener("error", function (e) {
-  alert("Error: " + e.message + " (" + (e.filename || "").split("/").pop() + " line " + e.lineno + ")");
+  const msg = "Something went wrong" + (e && e.message ? ": " + e.message : "");
+  setTimeout(() => {
+    if (typeof window.showToast === "function") window.showToast(msg, { type: "error", duration: 5000 });
+    else console.error(e);
+  }, 0);
+});
+window.addEventListener("unhandledrejection", function (e) {
+  const reason = e && e.reason && e.reason.message ? e.reason.message : "Please try again.";
+  setTimeout(() => {
+    if (typeof window.showToast === "function") window.showToast("Something went wrong: " + reason, { type: "error", duration: 5000 });
+    else console.error(e);
+  }, 0);
 });
 </script>
 <script src="app.js?v=11"></script>
@@ -125,7 +136,8 @@ window.addEventListener("error", function (e) {
 <script src="bizreports.js?v=1"></script>
 <script src="minimal.js?v=5"></script>
 <script src="minchart.js?v=1"></script>
-<script src="core.js?v=4"></script>
+<script src="core.js?v=5"></script>
+<script src="ui-polish.js?v=1"></script>
 <script src="money.js?v=1"></script>
 <script src="quickadd.js?v=1"></script>
 <script src="profile.js?v=1"></script>
@@ -137,6 +149,6 @@ if ("serviceWorker" in navigator) {
 }
 </script>
 <link rel="stylesheet" href="minimal.css?v=4">
-<link rel="stylesheet" href="foundation.css?v=4">
+<link rel="stylesheet" href="foundation.css?v=5">
 </body>
 </html>

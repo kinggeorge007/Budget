@@ -1,41 +1,43 @@
 "use strict";
-const CACHE = "salaryplan-v2";
+const CACHE = "budget-v3";
 const FILES = [
-  "./", "index.html", "style.css", "app.js", "budget.js", "bills.js",
-  "savings.js", "core.js", "foundation.css", "minimal.css", "minimal.js", "money.js",
-  "quickadd.js", "profile.js", "notes.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"
+  "./", "index.html", "style.css", "theme.css", "theme2.css", "minimal.css", "foundation.css",
+  "app.js", "budget.js", "bills.js", "savings.js", "reports.js", "edit.js", "balance.js", "tabs.js",
+  "charts.js", "addtx.js", "home.js", "settings.js", "notes.js", "notetile.js", "lock.js", "welcome.js",
+  "tools.js", "hometiles.js", "currency.js", "cardlist.js", "calcfull.js", "calchistory.js", "calendar.js",
+  "workspace.js", "bizbooks.js", "bizreports.js", "minimal.js", "minchart.js", "core.js", "money.js",
+  "quickadd.js", "profile.js", "ui-polish.js", "manifest.webmanifest", "icon-192.png", "apple-touch-icon.png",
+  "favicon.svg", "favicon-32.png", "logo.svg"
 ];
 
-self.addEventListener("install", e => {
-  e.waitUntil(
+self.addEventListener("install", event => {
+  event.waitUntil(
     caches.open(CACHE)
-      .then(c => Promise.allSettled(FILES.map(f => c.add(f))))
+      .then(cache => Promise.allSettled(FILES.map(file => cache.add(file))))
       .then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener("activate", e => {
-  e.waitUntil(
+self.addEventListener("activate", event => {
+  event.waitUntil(
     caches.keys()
-      .then(keys => Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k))))
+      .then(keys => Promise.all(keys.filter(key => key !== CACHE).map(key => caches.delete(key))))
       .then(() => self.clients.claim())
   );
 });
 
-self.addEventListener("fetch", e => {
-  const req = e.request;
+self.addEventListener("fetch", event => {
+  const req = event.request;
   if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
-  e.respondWith(
+  event.respondWith(
     fetch(req, { cache: "no-cache" })
       .then(res => {
         if (res.ok) {
           const copy = res.clone();
-          caches.open(CACHE).then(c => c.put(req, copy));
+          caches.open(CACHE).then(cache => cache.put(req, copy)).catch(() => {});
         }
         return res;
       })
-      .catch(() =>
-        caches.match(req, { ignoreSearch: true }).then(r => r || caches.match("index.html"))
-      )
+      .catch(() => caches.match(req, { ignoreSearch: true }).then(res => res || caches.match("index.html")))
   );
 });
