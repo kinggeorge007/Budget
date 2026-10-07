@@ -1,0 +1,115 @@
+/* Budget foundation (Phase 1). Loaded after minimal.css.
+   Holds ONLY what is new: the reusable UI components (core.js), the Light/Dark switch and a few
+   containment rules. Theme colours and the fluid scale live in minimal.css. */
+
+:root{--danger-solid:#C85A5A}
+
+/* ---- No pinch or double-tap zoom, also inside dialogs (they are their own scroll containers) ---- */
+html,body,dialog,.pBody{touch-action:pan-x pan-y}
+input,select,textarea,button{touch-action:manipulation}
+
+/* ---- Containment: long text and numbers must shrink or truncate, never widen the screen ---- */
+.pHead h2{min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#tabBar button{min-width:0}
+.pBody,.pCard,.pRow{min-width:0}
+.pRow strong,.pRow span{min-width:0;overflow-wrap:anywhere}
+
+/* ---- Light / Dark switch (More > Appearance) ---- */
+.themeRow{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:56px;border-bottom:1px solid var(--border)}
+.ui-seg{display:inline-flex;padding:3px;border-radius:999px;background:var(--surface-secondary);border:1px solid var(--border)}
+.ui-seg button{min-height:38px;min-width:76px;padding:0 14px;border:0;border-radius:999px;background:transparent;color:var(--text-secondary);font-size:.92rem;font-weight:400;transition:background .15s,color .15s}
+.ui-seg button.on{background:var(--text);color:var(--on-strong);font-weight:500}
+
+/* ======================================================================
+   UI COMPONENTS: modal, confirm, bottom sheet, action menu, dropdown, toast
+   ====================================================================== */
+
+/* Layer = a full-screen transparent <dialog> (top layer, so it sits above the page sheet) */
+dialog.ui-layer{position:fixed;top:0;left:0;width:100%;height:100%;max-width:none;max-height:none;margin:0;padding:0;border:0 !important;border-radius:0 !important;background:transparent !important;color:var(--text);overflow:hidden}
+dialog.ui-layer[open]{display:flex}
+.ui-layer::backdrop{background:var(--scrim);opacity:0;transition:opacity .2s ease}
+.ui-layer.in::backdrop{opacity:1}
+.ui-drop::backdrop{background:transparent}
+
+.ui-panel:focus{outline:none}
+.ui-panel{background:var(--surface);color:var(--text);border:1px solid var(--border);box-shadow:0 14px 44px rgba(0,0,0,.22);opacity:0;transition:transform .22s cubic-bezier(.2,.8,.2,1),opacity .18s ease;-webkit-overflow-scrolling:touch}
+.ui-layer.in .ui-panel{opacity:1;transform:none}
+
+/* Modal: centred card */
+dialog.ui-modal{align-items:center;justify-content:center;padding:var(--gutter)}
+.ui-modal .ui-panel{width:100%;max-width:360px;max-height:86%;overflow:auto;border-radius:20px;padding:20px;transform:translateY(10px) scale(.97)}
+
+/* Bottom sheet and action menu */
+.ui-sheet{align-items:flex-end;justify-content:center}
+.ui-sheet .ui-panel{width:100%;max-width:560px;max-height:88%;overflow:auto;border-radius:22px 22px 0 0;border-bottom:0;padding:0 var(--gutter) calc(16px + env(safe-area-inset-bottom,0px));transform:translateY(100%)}
+.ui-grab{display:flex;justify-content:center;padding:10px 0 12px;touch-action:none}
+.ui-handle{width:40px;height:4px;border-radius:2px;background:var(--text-secondary);opacity:.45}
+
+/* Dropdown: anchored list, positioned by showDropdown() */
+.ui-drop{display:block}
+.ui-drop .ui-panel{position:absolute;overflow:auto;padding:6px;border-radius:14px;transform:translateY(-6px)}
+.ui-drop .ui-panel.up{transform:translateY(6px)}
+.ui-drop.in .ui-panel{transform:none}
+
+/* Shared inner parts */
+.ui-title{margin:0 0 6px;font-size:1.1rem;font-weight:500;letter-spacing:-.01em;overflow-wrap:anywhere}
+.ui-sheet .ui-title{margin:0 0 8px}
+.ui-body{min-width:0}
+.ui-text{margin:0;color:var(--text-secondary);line-height:1.5;overflow-wrap:anywhere}
+.ui-actions{display:flex;gap:10px;margin-top:20px}
+.ui-actions.stack{flex-direction:column}
+.ui-actions .ui-btn{flex:1}
+
+.ui-btn{min-height:48px;padding:0 20px;border-radius:999px;border:1px solid transparent;font-size:1rem;font-weight:500;cursor:pointer}
+.ui-btn:active{transform:scale(.98)}
+.ui-btn-primary{background:var(--text);color:var(--on-strong)}
+.ui-btn-secondary{background:transparent;color:var(--text);border-color:var(--border)}
+.ui-btn-danger{background:var(--danger-solid);color:#fff}
+
+.ui-list{display:flex;flex-direction:column}
+.ui-item{display:flex;align-items:center;gap:14px;width:100%;min-height:56px;padding:0 2px;background:transparent;border:0;border-bottom:1px solid var(--border);border-radius:0;color:var(--text);text-align:left;font-size:1rem;font-weight:400}
+.ui-item:last-child{border-bottom:0}
+.ui-item.danger{color:var(--accent-red)}
+.ui-ic{display:flex;flex:none}
+.ui-ic svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
+.ui-itxt{display:flex;flex-direction:column;min-width:0;flex:1}
+.ui-ilabel{overflow-wrap:anywhere}
+.ui-ihint{font-size:.8rem;color:var(--text-secondary)}
+.ui-cancel{width:100%;margin-top:12px}
+
+.ui-opt{display:flex;align-items:center;gap:10px;width:100%;min-height:48px;padding:0 12px;border:0;border-radius:10px;background:transparent;color:var(--text);text-align:left;font-size:1rem;font-weight:400}
+.ui-opt.on{background:var(--surface-secondary)}
+.ui-check{display:flex;flex:none;color:var(--text)}
+.ui-check svg{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+/* Toasts: popover (top layer) so they show above an open page sheet, and never take taps */
+.ui-toasts{position:fixed;left:0;right:0;top:auto;bottom:calc(84px + env(safe-area-inset-bottom,0px));width:auto;height:auto;margin:0;padding:0;border:0;background:transparent;overflow:visible;display:flex;flex-direction:column;align-items:center;gap:8px;pointer-events:none;color:inherit}
+.ui-toasts:not(:popover-open):not(:empty){display:flex}
+.ui-toast{pointer-events:auto;display:flex;align-items:center;gap:14px;max-width:min(92vw,420px);padding:12px 18px;border-radius:999px;background:var(--text);color:var(--on-strong);font-size:.92rem;line-height:1.35;box-shadow:0 8px 28px rgba(0,0,0,.25);opacity:0;transform:translateY(8px);transition:opacity .2s ease,transform .2s ease}
+.ui-toast.in{opacity:1;transform:none}
+.ui-toast.error{background:var(--danger-solid);color:#fff}
+.ui-toast-msg{min-width:0;overflow-wrap:anywhere}
+.ui-toast-act{flex:none;min-height:32px;padding:0 4px;border:0;background:transparent;color:inherit;font-weight:600;text-decoration:underline}
+
+/* Quick menu: round actions fan out of the + button */
+dialog.ui-quick{display:block}
+dialog.ui-quick[open]{display:block}
+.ui-quick::backdrop{background:rgba(0,0,0,.58)}
+.ui-quick .ui-panel{position:absolute;top:0;left:0;width:100%;height:100%;max-width:none;background:transparent;border:0;box-shadow:none;opacity:1;transform:none;overflow:visible;pointer-events:none}
+.ui-q,.ui-qx{pointer-events:auto}
+.ui-q{position:absolute;width:68px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:0;background:transparent;border:0;color:#fff;opacity:0;transform:translate(var(--dx),var(--dy)) scale(.35);transition:transform .26s cubic-bezier(.2,.9,.25,1.15),opacity .18s ease;transition-delay:calc(var(--i) * 35ms)}
+.ui-quick.in .ui-q{opacity:1;transform:none}
+.ui-qc{width:60px;height:60px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:var(--surface);color:var(--text);box-shadow:0 8px 24px rgba(0,0,0,.35)}
+.ui-qc svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.ui-q.in .ui-qc{color:var(--accent-green)}
+.ui-q.out .ui-qc{color:var(--accent-red)}
+.ui-ql{font-size:.8rem;font-weight:500;letter-spacing:.04em}
+.ui-q:active .ui-qc{transform:scale(.94)}
+.ui-qx{position:absolute;padding:0;border:0;border-radius:50%;background:var(--text);color:var(--on-strong);display:flex;align-items:center;justify-content:center}
+.ui-qx svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.5;stroke-linecap:round;transition:transform .26s cubic-bezier(.2,.9,.25,1.15)}
+.ui-quick.in .ui-qx svg{transform:rotate(45deg)}
+@media (prefers-reduced-motion:reduce){.ui-q,.ui-qx svg{transition:none}}
+
+@media (prefers-reduced-motion:reduce){
+  .ui-panel,.ui-toast,.ui-layer::backdrop{transition:none}
+}

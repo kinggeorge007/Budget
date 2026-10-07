@@ -12,11 +12,6 @@ clStyle.textContent = `
 .card.tap{position:relative;cursor:pointer}
 .card.tap::after{content:"›";position:absolute;right:14px;top:10px;font-size:1.4rem;color:var(--muted)}
 .card.tap:active{transform:scale(.98)}
-.hxItem{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;text-align:left;background:var(--card);color:var(--text);border:0;border-radius:14px;box-shadow:var(--shadow);padding:12px 14px;margin-bottom:8px;min-height:0}
-.hxItem .info{min-width:0}
-.hxItem .info strong{display:block;word-break:break-word}
-.hxItem .meta{color:var(--muted);font-size:.8rem;word-break:break-word}
-.hxItem .amt{font-weight:700;white-space:nowrap}
 `;
 document.head.appendChild(clStyle);
 
@@ -30,7 +25,7 @@ function historyPage(body, type) {
   catSel.setAttribute("aria-label", "Category");
   catSel.style.margin = "12px 0";
   const summary = mkEl("p", "muted", "");
-  const list = mkEl("div");
+  const list = mkEl("div", "list txList");
   const more = mkEl("button", "secondary", "Show more");
   more.type = "button";
   more.style.width = "100%";
@@ -78,18 +73,7 @@ function historyPage(body, type) {
     if (!items.length) {
       list.appendChild(mkEl("p", "muted", "No " + label + " found."));
     }
-    items.slice(0, st.limit).forEach(t => {
-      const b = mkEl("button", "hxItem");
-      b.type = "button";
-      const info = mkEl("div", "info");
-      info.append(
-        mkEl("strong", "", t.category),
-        mkEl("span", "meta", niceDate(t.date) + (t.time ? " " + niceTime(t.time) : "") + (t.note ? " · " + t.note : ""))
-      );
-      b.append(info, mkEl("span", "amt " + t.type, (t.type === "income" ? "+" : "-") + formatKobo(t.amount)));
-      b.onclick = () => openEdit(t);
-      list.appendChild(b);
-    });
+    items.slice(0, st.limit).forEach(t => list.appendChild(txRow(t, "button")));
     more.style.display = items.length > st.limit ? "" : "none";
   }
 

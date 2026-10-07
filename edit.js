@@ -84,31 +84,13 @@ $("editForm").addEventListener("submit", e => {
   render();
 });
 
-// Add an Edit button to each row in the transaction list.
-function addEditButtons() {
-  const month = $("month").value;
-  if (!month) return;
-  const items = data.transactions
-    .filter(t => t.date.startsWith(month))
-    .sort((a, b) => b.date.localeCompare(a.date) || (b.time || "").localeCompare(a.time || ""));
-  const rows = document.querySelectorAll("#list li");
-  if (rows.length !== items.length) return;
-  rows.forEach((li, i) => {
-    if (li.querySelector(".editBtn")) return;
-    const t = items[i];
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "del editBtn";
-    btn.style.color = "var(--accent)";
-    btn.textContent = "Edit";
-    btn.setAttribute("aria-label", "Edit " + t.category + " transaction");
-    btn.onclick = () => openEdit(t);
-    li.insertBefore(btn, li.lastElementChild);
+// Tapping a transaction row offers Edit or Delete (custom menu, no native pop-up).
+function openTxMenu(t) {
+  showActionMenu({
+    title: t.note || t.category,
+    items: [
+      { label: "Edit", hint: "Change amount, date or category", onSelect: () => openEdit(t) },
+      { label: "Delete", danger: true, onSelect: () => deleteTx(t) }
+    ]
   });
 }
-
-const renderBeforeEdit = render;
-render = function () { renderBeforeEdit(); addEditButtons(); };
-$("month").addEventListener("change", addEditButtons);
-
-addEditButtons();

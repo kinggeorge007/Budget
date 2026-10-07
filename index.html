@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1, maximum-scale=1, user-scalable=no">
 <title>Budget</title>
 <meta name="description" content="Simple budgeting for individuals and businesses">
 <meta name="theme-color" content="#FFFFFF">
@@ -13,9 +13,19 @@
 <style>
 :root{--bg:#FFFFFF;--card:#FFFFFF;--text:#171717;--muted:#777777;--line:#EAEAEA;--accent:#171717;--accent2:#171717;--danger:#D97979}
 html,body{background:#FFFFFF;color:#171717}
+html[data-theme="dark"],html[data-theme="dark"] body{background:#1C1C1E;color:#F3F3F1}
 html.locked body > *:not(#lockDlg){visibility:hidden}
 </style>
 <script>
+try {
+  /* Apply the saved theme before first paint so there is no white flash in dark mode. */
+  if (localStorage.getItem("sp_theme") === "dark") {
+    document.documentElement.setAttribute("data-theme", "dark");
+    document.querySelector('meta[name="theme-color"]').setAttribute("content", "#1C1C1E");
+  } else {
+    document.documentElement.setAttribute("data-theme", "light");
+  }
+} catch (e) {}
 try {
   if (localStorage.getItem("sp_pin")) document.documentElement.classList.add("locked");
   setTimeout(function () {
@@ -68,7 +78,7 @@ try {
 
   <section>
     <h2>Transactions</h2>
-    <ul id="list" class="list"></ul>
+    <ul id="list" class="list txList"></ul>
     <p id="empty" class="muted">Nothing yet this month. Tap + to add your first transaction.</p>
   </section>
 
@@ -87,12 +97,12 @@ window.addEventListener("error", function (e) {
   alert("Error: " + e.message + " (" + (e.filename || "").split("/").pop() + " line " + e.lineno + ")");
 });
 </script>
-<script src="app.js?v=10"></script>
+<script src="app.js?v=11"></script>
 <script src="budget.js?v=10"></script>
 <script src="bills.js?v=9"></script>
 <script src="savings.js?v=9"></script>
 <script src="reports.js?v=1"></script>
-<script src="edit.js?v=1"></script>
+<script src="edit.js?v=2"></script>
 <script src="balance.js?v=1"></script>
 <script src="tabs.js?v=1"></script>
 <script src="charts.js?v=1"></script>
@@ -106,15 +116,18 @@ window.addEventListener("error", function (e) {
 <script src="tools.js?v=1"></script>
 <script src="hometiles.js?v=1"></script>
 <script src="currency.js?v=1"></script>
-<script src="cardlist.js?v=1"></script>
+<script src="cardlist.js?v=2"></script>
 <script src="calcfull.js?v=1"></script>
 <script src="calchistory.js?v=1"></script>
 <script src="calendar.js?v=1"></script>
 <script src="workspace.js?v=1"></script>
 <script src="bizbooks.js?v=1"></script>
 <script src="bizreports.js?v=1"></script>
-<script src="minimal.js?v=1"></script>
+<script src="minimal.js?v=3"></script>
 <script src="minchart.js?v=1"></script>
+<script src="core.js?v=3"></script>
+<script src="money.js?v=1"></script>
+<script src="quickadd.js?v=1"></script>
 <script>
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", function () {
@@ -122,6 +135,7 @@ if ("serviceWorker" in navigator) {
   });
 }
 </script>
-<link rel="stylesheet" href="minimal.css?v=1">
+<link rel="stylesheet" href="minimal.css?v=3">
+<link rel="stylesheet" href="foundation.css?v=2">
 </body>
 </html>

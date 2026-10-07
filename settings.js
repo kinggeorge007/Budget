@@ -14,8 +14,6 @@ ICONS.back = '<line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12
 // ---- Styles ----
 const sStyle = document.createElement("style");
 sStyle.textContent = `
-:root[data-theme="light"]{--bg:#f6f8f7;--card:#fff;--text:#14231c;--muted:#6b7d73;--accent:#00a862;--accent2:#00b36b;--danger:#e0454b;--line:#e8eeeb;--mint:#e3f6ec;--shadow:0 1px 4px rgba(0,0,0,.06);color-scheme:light}
-:root[data-theme="dark"]{--bg:#0d1512;--card:#15211c;--text:#e8f3ed;--muted:#93a89d;--accent:#2fd08a;--accent2:#2fd08a;--danger:#ff7b7f;--line:#22332b;--mint:#173326;--shadow:0 1px 4px rgba(0,0,0,.35);color-scheme:dark}
 .brand{display:flex;align-items:center;gap:6px}
 #menuBtn{width:44px;height:44px;min-height:0;padding:0;border:0;background:transparent;color:var(--text);display:flex;align-items:center;justify-content:center;border-radius:50%}
 #menuBtn svg,.dItem svg,.pHead svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
@@ -54,14 +52,21 @@ function mkEl(tag, cls, text) {
 }
 
 // ---- Theme ----
+// Theme: "light" (default, the existing look) or "dark" (charcoal). Anything else, including the
+// old "system" value, is treated as light. Changing it only flips a CSS attribute: no reload.
+const THEME_COLORS = { light: "#FFFFFF", dark: "#1C1C1E" };
 function applyTheme(v) {
-  if (v === "light" || v === "dark") document.documentElement.setAttribute("data-theme", v);
-  else document.documentElement.removeAttribute("data-theme");
+  v = v === "dark" ? "dark" : "light";
+  document.documentElement.setAttribute("data-theme", v);
+  const m = document.querySelector('meta[name="theme-color"]');
+  if (m) m.setAttribute("content", THEME_COLORS[v]);
+  document.dispatchEvent(new CustomEvent("themechange", { detail: v }));
 }
 function getTheme() {
-  try { return localStorage.getItem("sp_theme") || "system"; } catch (e) { return "system"; }
+  try { return localStorage.getItem("sp_theme") === "dark" ? "dark" : "light"; } catch (e) { return "light"; }
 }
 function setTheme(v) {
+  v = v === "dark" ? "dark" : "light";
   try { localStorage.setItem("sp_theme", v); } catch (e) {}
   applyTheme(v);
 }
@@ -130,7 +135,7 @@ function card(parent, heading, paragraphs) {
 function settingsPage(body) {
   const t = card(body, "Appearance", []);
   const opts = mkEl("div", "pOpts");
-  [["system", "System"], ["light", "Light"], ["dark", "Dark"]].forEach(o => {
+  [["light", "Light"], ["dark", "Dark"]].forEach(o => {
     const b = mkEl("button", getTheme() === o[0] ? "on" : "", o[1]);
     b.type = "button";
     b.onclick = () => { setTheme(o[0]); openPage("Settings", settingsPage); };

@@ -242,7 +242,7 @@ function converterPage(body) {
     return s;
   };
   const amt = document.createElement("input");
-  amt.type = "number"; amt.inputMode = "decimal"; amt.step = "any"; amt.min = "0"; amt.value = "1";
+  amt.type = "number"; amt.dataset.plain = "1"; amt.inputMode = "decimal"; amt.step = "any"; amt.min = "0"; amt.value = "1";
   amt.setAttribute("aria-label", "Amount to convert");
   const from = mkSel("From currency", lsGet("sp_fx_from") || "USD");
   const to = mkSel("To currency", lsGet("sp_fx_to") || "NGN");

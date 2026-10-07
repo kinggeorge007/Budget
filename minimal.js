@@ -23,6 +23,7 @@
       r.setAttribute("height", h);
       r.setAttribute("rx", rx);
       r.setAttribute("fill", fill);
+      if (fill === "#212121") r.setAttribute("class", "logoTile");
       s.appendChild(r);
     };
 
@@ -93,7 +94,7 @@
   });
 
   const BRAND_SKIP =
-    ".nText,.nItem,.meta,.info,.hxItem,.chItem";
+    ".nText,.nItem,.meta,.info,.txRow,.chItem";
 
   function sweepBrand() {
     const walker = document.createTreeWalker(
@@ -278,14 +279,17 @@
     plusBtn.className = "plusBtn";
     plusBtn.setAttribute(
       "aria-label",
-      "Add transaction"
+      "Quick add"
     );
+    plusBtn.setAttribute("aria-haspopup", "menu");
 
     plusBtn.innerHTML =
       svgIcon("plus2");
 
     plusBtn.onclick = () =>
-      fab.onclick();
+      typeof openQuickAdd === "function"
+        ? openQuickAdd(plusBtn)
+        : fab.onclick();
 
     tabBar.insertBefore(
       plusBtn,
@@ -379,7 +383,38 @@
     return null;
   }
 
+  function themeSwitch(body) {
+    body.appendChild(mkEl("div", "moreGrp", "Appearance"));
+
+    const row = mkEl("div", "themeRow");
+    row.appendChild(mkEl("span", "", "Theme"));
+
+    const seg = mkEl("div", "ui-seg");
+    seg.setAttribute("role", "radiogroup");
+    seg.setAttribute("aria-label", "Theme");
+
+    [["light", "Light"], ["dark", "Dark"]].forEach(o => {
+      const b = mkEl("button", getTheme() === o[0] ? "on" : "", o[1]);
+      b.type = "button";
+      b.setAttribute("role", "radio");
+      b.setAttribute("aria-checked", getTheme() === o[0] ? "true" : "false");
+      b.onclick = () => {
+        setTheme(o[0]);
+        seg.querySelectorAll("button").forEach(x => {
+          x.classList.toggle("on", x === b);
+          x.setAttribute("aria-checked", x === b ? "true" : "false");
+        });
+      };
+      seg.appendChild(b);
+    });
+
+    row.appendChild(seg);
+    body.appendChild(row);
+  }
+
   function morePage(body) {
+    themeSwitch(body);
+
     const groups = [
       [
         "Money",
@@ -528,7 +563,6 @@
         );
 
         button.onclick = () => {
-          pageDlg.close();
           row.fn();
         };
 
@@ -536,78 +570,6 @@
           button
         );
       });
-    });
-  }
-
-  // ---- Small colour dot beside each transaction ----
-  const DOT_PAL = [
-    "--accent-orange",
-    "--accent-red",
-    "--accent-green",
-    "--accent-teal",
-    "--accent-indigo"
-  ];
-
-  function dotVar(name) {
-    let h = 0;
-
-    for (
-      let i = 0;
-      i < name.length;
-      i++
-    ) {
-      h =
-        (h * 31 +
-          name.charCodeAt(i)) >>>
-        0;
-    }
-
-    return DOT_PAL[h % 5];
-  }
-
-  function addDots() {
-    document
-      .querySelectorAll(
-        "#list li .info strong"
-      )
-      .forEach(strong => {
-        if (
-          strong.querySelector(
-            ".cdt"
-          )
-        ) {
-          return;
-        }
-
-        const dot =
-          document.createElement(
-            "span"
-          );
-
-        dot.className = "cdt";
-
-        dot.style.background =
-          "var(" +
-          dotVar(
-            strong.textContent
-          ) +
-          ")";
-
-        strong.insertBefore(
-          dot,
-          strong.firstChild
-        );
-      });
-  }
-
-  const listEl = $("list");
-
-  if (listEl) {
-    new MutationObserver(
-      addDots
-    ).observe(listEl, {
-      childList: true,
-      subtree: true
     });
   }
 
@@ -694,6 +656,5 @@
 
   // ---- Final refresh ----
   sweepBrand();
-  addDots();
 
 })();

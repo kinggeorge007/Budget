@@ -74,6 +74,65 @@ function fillCategories() {
   });
 }
 
+// ---- Transaction row: used by the Home list and the Income / Expenses history pages ----
+// [icon]  Name                    +/-Amount
+//         Category • date • time
+const TX_ICON = {
+  income: '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="17" y1="7" x2="7" y2="17"/><polyline points="7 8 7 17 16 17"/></svg>',
+  expense: '<svg viewBox="0 0 24 24" aria-hidden="true"><line x1="7" y1="17" x2="17" y2="7"/><polyline points="8 7 17 7 17 16"/></svg>'
+};
+function txRow(t, tag) {
+  const row = document.createElement(tag || "li");
+  row.className = "txRow " + (t.type === "income" ? "in" : "out");
+  row.setAttribute("role", "button");
+  row.tabIndex = 0;
+
+  const ic = document.createElement("span");
+  ic.className = "txIc";
+  ic.innerHTML = TX_ICON[t.type === "income" ? "income" : "expense"];
+
+  const info = document.createElement("div");
+  info.className = "info";
+  const name = document.createElement("strong");
+  name.className = "txName";
+  name.textContent = t.note || t.category;
+  const meta = document.createElement("span");
+  meta.className = "meta";
+  const bits = [];
+  if (t.note) bits.push(t.category);
+  bits.push(niceDate(t.date));
+  if (t.time) bits.push(niceTime(t.time));
+  meta.textContent = bits.join(" \u2022 ");
+  info.append(name, meta);
+
+  const amt = document.createElement("span");
+  amt.className = "amt " + t.type;
+  amt.textContent = (t.type === "income" ? "+" : "-") + formatKobo(t.amount);
+
+  row.append(ic, info, amt);
+  row.setAttribute("aria-label", (t.note || t.category) + ", " + amt.textContent);
+  const open = () => { if (typeof openTxMenu === "function") openTxMenu(t); };
+  row.addEventListener("click", open);
+  row.addEventListener("keydown", e => {
+    if (e.key === "Enter" || e.key === " ") { e.preventDefault(); open(); }
+  });
+  return row;
+}
+
+async function deleteTx(t) {
+  const ok = await showConfirmDialog({
+    title: "Delete this transaction?",
+    message: (t.note || t.category) + " \u2022 " + formatKobo(t.amount),
+    confirmLabel: "Delete",
+    danger: true
+  });
+  if (!ok) return;
+  data.transactions = data.transactions.filter(x => x.id !== t.id);
+  saveData();
+  render();
+  showToast("Transaction deleted");
+}
+
 // ---- Render ----
 function render() {
   const month = $("month").value;
@@ -92,39 +151,7 @@ function render() {
 
   const list = $("list");
   list.innerHTML = "";
-  items.forEach(t => {
-    const li = document.createElement("li");
-    const info = document.createElement("div");
-    info.className = "info";
-    const title = document.createElement("strong");
-    title.textContent = t.category;
-    const meta = document.createElement("span");
-    meta.className = "meta";
-    let metaText = niceDate(t.date);
-    if (t.time) metaText += " " + niceTime(t.time);
-    if (t.note) metaText += " · " + t.note;
-    meta.textContent = metaText;
-    info.append(title, meta);
-
-    const amt = document.createElement("span");
-    amt.className = "amt " + t.type;
-    amt.textContent = (t.type === "income" ? "+" : "-") + formatKobo(t.amount);
-
-    const del = document.createElement("button");
-    del.className = "del";
-    del.type = "button";
-    del.textContent = "Delete";
-    del.setAttribute("aria-label", "Delete " + t.category + " transaction");
-    del.onclick = () => {
-      if (confirm("Delete this transaction?")) {
-        data.transactions = data.transactions.filter(x => x.id !== t.id);
-        saveData();
-        render();
-      }
-    };
-    li.append(info, amt, del);
-    list.appendChild(li);
-  });
+  items.forEach(t => list.appendChild(txRow(t, "li")));
   $("empty").style.display = items.length ? "none" : "block";
   if (typeof renderBudget === "function") renderBudget();
 }
