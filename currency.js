@@ -69,29 +69,36 @@ settingsPage = function (body) {
   c.innerHTML = "";
   c.appendChild(mkEl("h3", "", "Currency"));
 
-  const sel = document.createElement("select");
-  sel.setAttribute("aria-label", "Preferred currency");
-  Object.keys(FX_CODES).forEach(code => {
-    const o = document.createElement("option");
-    o.value = code;
-    o.textContent = code + " - " + FX_CODES[code];
-    sel.appendChild(o);
-  });
-  sel.value = curCode;
-  sel.onchange = () => {
-    const next = sel.value;
-    if (!confirm("Change the currency to " + FX_CODES[next] + "?\n\nThis only changes the symbol and number format. Your saved amounts are NOT converted.")) {
-      sel.value = curCode;
-      return;
+  // Custom picker (no native <select>): a field that opens the Budget dropdown.
+  const pick = mkEl("button", "selBtn");
+  pick.type = "button";
+  pick.setAttribute("aria-label", "Preferred currency");
+  pick.setAttribute("aria-haspopup", "listbox");
+  pick.appendChild(mkEl("span", "", curCode + " - " + FX_CODES[curCode]));
+  pick.appendChild(mkEl("span", "selCaret", "\u25BE"));
+  pick.onclick = () => showDropdown({
+    anchor: pick,
+    value: curCode,
+    options: Object.keys(FX_CODES).map(code => ({ value: code, label: code + " - " + FX_CODES[code] })),
+    onSelect: next => {
+      if (next === curCode) return;
+      showConfirmDialog({
+        title: "Change currency to " + FX_CODES[next] + "?",
+        message: "This only changes the symbol and number format. Your saved amounts are NOT converted.",
+        confirmLabel: "Change"
+      }).then(ok => {
+        if (!ok) return;
+        curCode = next;
+        lsSet("sp_cur", curCode);
+        applyCurrency();
+        render();
+        sweepCurrency();
+        openPage("Settings", settingsPage);
+        showToast("Currency changed to " + FX_CODES[next]);
+      });
     }
-    curCode = next;
-    lsSet("sp_cur", curCode);
-    applyCurrency();
-    render();
-    sweepCurrency();
-    openPage("Settings", settingsPage);
-  };
-  c.appendChild(sel);
+  });
+  c.appendChild(pick);
   c.appendChild(mkEl("p", "muted", "Example: " + curFmt.format(150000.5)));
   c.appendChild(mkEl("p", "muted", "Changing the currency does not convert your saved amounts. For example, a ₦50,000 budget would show as 50,000 in the new currency."));
 };

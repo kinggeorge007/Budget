@@ -110,6 +110,31 @@ dialog.ui-quick[open]{display:block}
 .ui-quick.in .ui-qx svg{transform:rotate(45deg)}
 @media (prefers-reduced-motion:reduce){.ui-q,.ui-qx svg{transition:none}}
 
+/* ---- Profile (Phase 5) ---- */
+.avatar{flex:none;border-radius:50%;background:var(--surface-secondary);color:var(--text);display:flex;align-items:center;justify-content:center;overflow:hidden;font-weight:500;border:1px solid var(--border)}
+.avatar img{width:100%;height:100%;object-fit:cover;display:block}
+.avatar svg{width:55%;height:55%;fill:none;stroke:var(--text-secondary);stroke-width:1.5;stroke-linecap:round}
+.avatar.md{width:52px;height:52px;font-size:1.25rem}
+.avatar.lg{width:104px;height:104px;font-size:2.4rem}
+.profCard{display:flex;align-items:center;gap:14px;width:100%;margin:6px 0 4px;padding:14px;text-align:left;color:var(--text);background:var(--card-bg) !important;border:0 !important;border-radius:var(--r-card) !important;box-shadow:var(--card-shadow) !important;min-height:0}
+.profTxt{display:flex;flex-direction:column;min-width:0;flex:1}
+.profTxt strong{font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.profTxt span{font-size:.82rem;color:var(--text-secondary)}
+.profGo{color:var(--text-secondary);font-size:1.4rem}
+.profTop{display:flex;flex-direction:column;align-items:center;text-align:center;gap:8px;padding:8px 0 20px}
+.profName{margin:6px 0 0;font-size:1.3rem;font-weight:500;overflow-wrap:anywhere;max-width:100%}
+.profTop .muted{margin:0}
+.avatarBtn{position:relative;padding:0;border:0 !important;background:transparent !important;border-radius:50% !important;min-height:0}
+.avatarEdit{position:absolute;right:-6px;bottom:2px;padding:3px 10px;border-radius:999px;background:var(--text);color:var(--on-strong);font-size:.72rem;font-weight:500}
+.profPhotoBtn{margin-top:4px}
+.profLabel{display:block;margin:6px 0 6px;font-size:.82rem;color:var(--text-secondary)}
+
+/* ---- More + settings (Phase 6) ---- */
+.moreVer{margin:22px 0 8px;text-align:center;font-size:.78rem;color:var(--text-secondary)}
+.selBtn{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:0 14px;text-align:left;font-size:1rem;font-weight:400;color:var(--text);background:var(--ctl-bg) !important;border:1px solid var(--border) !important;border-radius:12px !important}
+.selBtn span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.selCaret{flex:none;color:var(--text-secondary)}
+
 @media (prefers-reduced-motion:reduce){
   .ui-panel,.ui-toast,.ui-layer::backdrop{transition:none}
 }

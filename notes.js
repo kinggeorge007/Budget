@@ -41,16 +41,26 @@ function fmtStamp(iso) {
 
 const nStyle = document.createElement("style");
 nStyle.textContent = `
-.nItem{display:block;width:100%;text-align:left;background:var(--card);color:var(--text);border:0;border-radius:16px;box-shadow:var(--shadow);padding:14px;margin-bottom:10px;min-height:0}
-.nItem strong{display:block;margin-bottom:4px;word-break:break-word}
-.nItem .nPrev{color:var(--muted);font-size:.9rem;word-break:break-word}
-.nItem .nDate{color:var(--muted);font-size:.75rem;margin-top:6px}
-.nArea{width:100%;min-height:260px;border-radius:12px;border:1px solid var(--line);background:var(--card);color:var(--text);padding:12px;font:inherit;line-height:1.5;resize:vertical}
-.nBar{display:flex;gap:8px;margin-top:12px}
+.nTop{margin-bottom:14px}
+.nTop input{width:100%}
+.nList{display:grid;grid-template-columns:minmax(0,1fr);gap:10px;padding-bottom:96px}
+.nItem{display:block;width:100%;text-align:left;color:var(--text);border:0;min-height:0}
+.nItem .nHead{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.nItem .nDate{color:var(--muted);font-size:.78rem;margin-top:2px}
+.nItem .nPrev{color:var(--muted);font-size:.9rem;margin-top:8px;line-height:1.4;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow-wrap:anywhere}
+.nEmpty{text-align:center;padding:56px 12px 0}
+.nEmpty strong{display:block;font-size:1.05rem;margin-bottom:6px}
+.nFab{position:fixed;right:max(20px,env(safe-area-inset-right,0px));bottom:calc(24px + env(safe-area-inset-bottom,0px));z-index:3;width:58px;height:58px;min-height:0;padding:0;border:0;border-radius:50%;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(0,0,0,.28)}
+.nFab svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-linecap:round}
+.nTitle{margin:0 0 4px;font-size:1.3rem;font-weight:500;letter-spacing:-.01em;overflow-wrap:anywhere}
+.nStamp{color:var(--muted);font-size:.8rem;margin-bottom:18px}
+.nText{white-space:pre-wrap;line-height:1.65;overflow-wrap:anywhere}
+.nHint{font-size:.8rem;margin-top:22px}
+.nTitleIn{width:100%;font-size:1.3rem;font-weight:500}
+.nSaved{color:var(--muted);font-size:.78rem;min-height:1.2em;margin:6px 0 10px}
+.nArea{width:100%;min-height:46vh;line-height:1.6;font:inherit;resize:none}
+.nBar{display:flex;gap:10px;margin-top:16px}
 .nBar button{flex:1}
-.nTop{display:grid;gap:10px;margin-bottom:14px}
-.nTitle{margin:0 0 10px;font-size:1.2rem;word-break:break-word}
-.nText{white-space:pre-wrap;line-height:1.6;word-break:break-word;background:var(--card);border-radius:16px;padding:14px;box-shadow:var(--shadow)}
 .nLink{display:inline;min-height:0;padding:0 5px;border:0;border-radius:6px;background:var(--mint);color:var(--accent);font:inherit;font-weight:700;text-decoration:underline}
 #nChip{position:fixed;left:16px;bottom:78px;z-index:12;display:none;align-items:center;background:var(--accent2);color:#fff;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
 #nChip button{background:transparent;color:#fff;border:0;min-height:48px;padding:0 14px;font-weight:700}
@@ -167,6 +177,26 @@ function followLink(target, noteId) {
 // ---- Pages ----
 let nSearch = "";
 
+// "6 Oct 2026 • 4:30 PM"
+const N_MON = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+function noteStamp(iso) {
+  const d = new Date(iso);
+  if (isNaN(d.getTime())) return "";
+  const h = d.getHours() % 12 || 12;
+  return d.getDate() + " " + N_MON[d.getMonth()] + " " + d.getFullYear() + " \u2022 " +
+    h + ":" + pad2(d.getMinutes()) + " " + (d.getHours() >= 12 ? "PM" : "AM");
+}
+
+// Heading and preview of a note for the list: the title, or the first line when there is none.
+function noteHeading(n) {
+  const first = (n.text.split("\n")[0] || "").trim();
+  return n.title || first.slice(0, 60) || "Untitled";
+}
+function notePreview(n) {
+  const body = n.title ? n.text : n.text.split("\n").slice(1).join(" ");
+  return body.replace(/\s+/g, " ").trim().slice(0, 140);
+}
+
 function notesPage(body) {
   const top = mkEl("div", "nTop");
   const search = document.createElement("input");
@@ -174,30 +204,38 @@ function notesPage(body) {
   search.placeholder = "Search notes";
   search.value = nSearch;
   search.setAttribute("aria-label", "Search notes");
-  const add = mkEl("button", "primary", "New note");
-  add.type = "button";
-  add.onclick = () => openPage("New note", b => noteEditor(b, null));
-  top.append(search, add);
-  const list = mkEl("div");
-  body.append(top, list);
+  top.appendChild(search);
+
+  const list = mkEl("div", "nList");
+
+  const fab = mkEl("button", "nFab");
+  fab.type = "button";
+  fab.setAttribute("aria-label", "New note");
+  fab.innerHTML = svgIcon("plus2");
+  fab.onclick = () => openPage("New note", b => noteEditor(b, null));
+
+  body.append(top, list, fab);
 
   function draw() {
     list.innerHTML = "";
     const q = nSearch.trim().toLowerCase();
     const items = getNotes().slice()
-      .sort((a, b) => (b.updated || "").localeCompare(a.updated || ""))
+      .sort((a, b) => (b.updated || b.created || "").localeCompare(a.updated || a.created || ""))
       .filter(n => !q || (n.title + " " + n.text).toLowerCase().includes(q));
     if (!items.length) {
-      list.appendChild(mkEl("p", "muted", q ? "No notes match your search." : "No notes yet. Tap New note to write one."));
+      const empty = mkEl("div", "nEmpty");
+      empty.appendChild(mkEl("strong", "", q ? "No notes match" : "No notes yet"));
+      empty.appendChild(mkEl("p", "muted", q ? "Try a different word." : "Tap + to write your first note."));
+      list.appendChild(empty);
       return;
     }
     items.forEach(n => {
       const b = mkEl("button", "nItem");
       b.type = "button";
-      const firstLine = n.text.split("\n")[0];
-      b.appendChild(mkEl("strong", "", n.title || firstLine.slice(0, 60) || "Untitled"));
-      if (n.text) b.appendChild(mkEl("div", "nPrev", n.text.replace(/\s+/g, " ").slice(0, 90)));
-      b.appendChild(mkEl("div", "nDate", fmtStamp(n.updated || n.created)));
+      b.appendChild(mkEl("strong", "nHead", noteHeading(n)));
+      b.appendChild(mkEl("div", "nDate", noteStamp(n.updated || n.created)));
+      const prev = notePreview(n);
+      if (prev) b.appendChild(mkEl("div", "nPrev", prev));
       b.onclick = () => openPage("Note", pb => noteView(pb, n.id));
       list.appendChild(b);
     });
@@ -206,59 +244,69 @@ function notesPage(body) {
   draw();
 }
 
+function deleteNote(note) {
+  return showConfirmDialog({
+    title: "Delete this note?",
+    message: "\u201C" + noteHeading(note) + "\u201D will be removed. This cannot be undone.",
+    confirmLabel: "Delete",
+    danger: true
+  }).then(ok => {
+    if (!ok) return false;
+    data.budgets._notes = getNotes().filter(x => x.id !== note.id);
+    saveData();
+    showToast("Note deleted");
+    openPage("Notes", notesPage, { replace: true });
+    return true;
+  });
+}
+
 function noteView(body, id) {
   const note = getNotes().find(x => x.id === id);
   if (!note) { body.appendChild(mkEl("p", "muted", "This note no longer exists.")); return; }
   if (note.title) body.appendChild(mkEl("h3", "nTitle", note.title));
+  body.appendChild(mkEl("div", "nStamp", noteStamp(note.updated || note.created)));
   const txt = mkEl("div", "nText");
   renderLinked(txt, note.text, note.id);
   body.appendChild(txt);
-  body.appendChild(mkEl("p", "muted", "Tap a highlighted word to jump to it in the app. " + fmtStamp(note.updated || note.created)));
+  body.appendChild(mkEl("p", "muted nHint", "Tap a highlighted word to jump to it in the app."));
 
   const bar = mkEl("div", "nBar");
   const edit = mkEl("button", "primary", "Edit");
   edit.type = "button";
   edit.onclick = () => openPage("Edit note", b => noteEditor(b, note.id));
-  const all = mkEl("button", "secondary", "All notes");
-  all.type = "button";
-  all.onclick = () => openPage("Notes", notesPage);
-  const del = mkEl("button", "secondary", "Delete");
+  const del = mkEl("button", "secondary nDel", "Delete");
   del.type = "button";
-  del.style.color = "var(--danger)";
-  del.onclick = () => {
-    if (!confirm("Delete this note?")) return;
-    data.budgets._notes = getNotes().filter(x => x.id !== note.id);
-    saveData();
-    openPage("Notes", notesPage);
-  };
-  bar.append(edit, all, del);
+  del.onclick = () => deleteNote(note);
+  bar.append(edit, del);
   body.appendChild(bar);
 }
 
 function noteEditor(body, id) {
   let note = id ? getNotes().find(x => x.id === id) : null;
+  const existing = !!note;
 
   const titleIn = document.createElement("input");
   titleIn.type = "text";
+  titleIn.className = "nTitleIn";
   titleIn.maxLength = 100;
-  titleIn.placeholder = "Title (optional)";
+  titleIn.placeholder = "Title";
   titleIn.value = note ? note.title : "";
   titleIn.setAttribute("aria-label", "Note title");
-  titleIn.style.marginBottom = "10px";
 
   const textIn = document.createElement("textarea");
   textIn.className = "nArea";
   textIn.maxLength = 5000;
-  textIn.placeholder = "Write your note here...";
+  textIn.placeholder = "Write your note\u2026";
   textIn.value = note ? note.text : "";
   textIn.setAttribute("aria-label", "Note text");
 
-  const status = mkEl("p", "muted", "Saves automatically as you type. Words like Food, your bill names and savings goals become tappable links when you view the note.");
+  const status = mkEl("div", "nSaved", note ? noteStamp(note.updated || note.created) : "");
 
+  // Kept from before: every keystroke is saved, so a draft survives the app locking or closing.
   function persist() {
     const title = titleIn.value.trim();
     const text = textIn.value;
-    if (!title && !text.trim()) return;
+    if (!title && !text.trim()) return false;
     const now = new Date().toISOString();
     if (!note) {
       note = { id: newId(), title: title, text: text, created: now, updated: now };
@@ -269,30 +317,30 @@ function noteEditor(body, id) {
       note.updated = now;
     }
     saveData();
+    status.textContent = "Saved \u2022 " + noteStamp(now);
+    return true;
   }
   titleIn.addEventListener("input", persist);
   textIn.addEventListener("input", persist);
 
   const bar = mkEl("div", "nBar");
-  const done = mkEl("button", "primary", "Done");
-  done.type = "button";
-  done.onclick = () => {
-    if (note) openPage("Note", b => noteView(b, note.id));
-    else openPage("Notes", notesPage);
+  const save = mkEl("button", "primary", "Save Note");
+  save.type = "button";
+  save.onclick = () => {
+    if (!persist()) { showToast("Write something first"); return; }
+    showToast("Note saved");
+    if (existing) openPage("Note", b => noteView(b, note.id));
+    else openPage("Notes", notesPage, { replace: true });
   };
-  const del = mkEl("button", "secondary", "Delete");
-  del.type = "button";
-  del.style.color = "var(--danger)";
-  del.onclick = () => {
-    if (note) {
-      if (!confirm("Delete this note?")) return;
-      data.budgets._notes = getNotes().filter(x => x.id !== note.id);
-      saveData();
-    }
-    openPage("Notes", notesPage);
-  };
-  bar.append(done, del);
-  body.append(titleIn, textIn, status, bar);
+  bar.appendChild(save);
+  if (existing) {
+    const del = mkEl("button", "secondary nDel", "Delete");
+    del.type = "button";
+    del.onclick = () => deleteNote(note);
+    bar.appendChild(del);
+  }
+  body.append(titleIn, status, textIn, bar);
+  if (!existing) setTimeout(() => titleIn.focus(), 60);
 }
 
 // ---- "Notes" as the first item in the slide-out menu ----

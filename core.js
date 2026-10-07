@@ -118,12 +118,15 @@
     pageBack();
   });
 
-  openPage = function (title, build) {
+  // openPage(title, build, { replace: true }) swaps the current page instead of stacking on it, for
+  // "save, then show the result" flows where Back should not return to the form.
+  openPage = function (title, build, opts) {
     if (!pageDlg.open) pageStack.length = 0;
     else if (pageStack.length) pageStack[pageStack.length - 1].scroll = pageDlg.scrollTop;
 
     const at = pageStack.findIndex(p => p.title === title);
     if (at >= 0) pageStack.length = at;      // returning to a page already in the stack
+    else if (opts && opts.replace && pageStack.length) pageStack.pop();
     const entry = { title, build, scroll: 0 };
     pageStack.push(entry);
     try {

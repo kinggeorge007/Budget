@@ -77,7 +77,7 @@ header #month{background:var(--ctl-bg) !important;color:var(--text) !important;b
 .income{color:var(--accent-green) !important}
 .expense{color:var(--accent-red) !important}
 .del,.editBtn{color:var(--text-secondary) !important;font-weight:400;font-size:.78rem;min-width:0 !important;padding:0 8px !important}
-.calItem,.nItem,.chItem,.toolRow,.wsRow{background:transparent !important;border:0 !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;box-shadow:none !important;padding:14px 0 !important;margin-bottom:0 !important}
+.calItem,.chItem,.toolRow,.wsRow{background:transparent !important;border:0 !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;box-shadow:none !important;padding:14px 0 !important;margin-bottom:0 !important}
 .bRow,.bTotals{background:var(--card-bg) !important;border:0 !important;border-radius:var(--r-card) !important;box-shadow:var(--card-shadow) !important;padding:14px !important;margin:0 0 10px !important}
 .txList{background:var(--card-bg);border-radius:var(--r-card);box-shadow:var(--card-shadow);padding:2px 14px !important;margin:0}
 .list li.txRow,.txRow{display:grid;grid-template-columns:auto minmax(0,1fr) auto;align-items:center;column-gap:12px;width:100%;min-height:60px;margin:0;padding:10px 0 !important;text-align:left;cursor:pointer;color:var(--text);background:transparent !important;border:0 !important;border-bottom:1px solid var(--border) !important;border-radius:0 !important;font:inherit}
@@ -107,6 +107,11 @@ form{background:transparent !important;border:0 !important;box-shadow:none !impo
 .rBlock td{border-bottom:1px solid var(--border)}
 .nLink{background:var(--surface-secondary) !important;color:var(--text) !important;font-weight:500}
 .nText,.calcDisp{background:transparent !important;box-shadow:none !important}
+.nItem{background:var(--card-bg) !important;border-radius:var(--r-card) !important;box-shadow:var(--card-shadow) !important;padding:14px !important;margin:0 !important;font-weight:400}
+.nFab{background:var(--text) !important;color:var(--on-strong) !important;border-radius:50% !important;padding:0 !important}
+.nTitleIn,.nArea{background:transparent !important;border:0 !important;border-radius:0 !important;padding:0 !important;color:var(--text) !important}
+.nTitleIn{border-bottom:1px solid var(--border) !important;padding-bottom:12px !important}
+.nDel{color:var(--accent-red) !important}
 
 /* ---- Buttons and fields ---- */
 .primary{background:var(--text) !important;color:var(--on-strong) !important;border:0 !important;border-radius:999px !important;box-shadow:none !important;font-weight:500}

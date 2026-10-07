@@ -413,6 +413,8 @@
   }
 
   function morePage(body) {
+    body.appendChild(mkEl("div", "moreGrp", "Profile"));
+    if (typeof profileCard === "function") profileCard(body);
     themeSwitch(body);
 
     const groups = [
@@ -482,21 +484,21 @@
     }
 
     groups.push([
-      "App",
+      "Settings",
       [
-        ["Workspaces", "grid"],
-        ["Settings", "sliders"],
+        ["Currency and settings", "sliders", "Settings"],
+        ["Backup, export and import", "backup", "Backup and restore"],
         ["Security", "lock"],
-        [
-          "Backup and restore",
-          "backup"
-        ],
+        ["Workspaces", "grid"]
+      ]
+    ]);
+
+    groups.push([
+      "About",
+      [
         ["How to use", "help"],
-        [
-          "Privacy and data",
-          "shield"
-        ],
-        ["About", "info"],
+        ["Privacy and data", "shield"],
+        ["About Budget", "info", "About"],
         ["Welcome tour", "star"]
       ]
     ]);
@@ -571,6 +573,10 @@
         );
       });
     });
+
+    body.appendChild(
+      mkEl("p", "moreVer", "Budget version " + APP_VERSION)
+    );
   }
 
   // ---- Settings ----

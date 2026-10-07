@@ -1,8 +1,9 @@
 "use strict";
-const CACHE = "salaryplan-v1";
+const CACHE = "salaryplan-v2";
 const FILES = [
   "./", "index.html", "style.css", "app.js", "budget.js", "bills.js",
-  "savings.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"
+  "savings.js", "core.js", "foundation.css", "minimal.css", "minimal.js", "money.js",
+  "quickadd.js", "profile.js", "notes.js", "manifest.webmanifest", "icon-192.png", "icon-512.png"
 ];
 
 self.addEventListener("install", e => {
