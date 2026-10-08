@@ -289,12 +289,22 @@
     plusBtn.onclick = () =>
       typeof openQuickAdd === "function"
         ? openQuickAdd(plusBtn)
-        : fab.onclick();
+        : (typeof fab !== "undefined" && fab.onclick ? fab.onclick() : null);
 
     tabBar.insertBefore(
       plusBtn,
       tabButtons.reports
     );
+  }
+
+  // Reports is still fully available, but no longer occupies the primary navigation.
+  if (tabButtons.reports) {
+    tabButtons.reports.style.display = "none";
+    tabButtons.reports.setAttribute("aria-hidden", "true");
+  }
+
+  if (typeof installQuickAddGesture === "function") {
+    installQuickAddGesture(plusBtn);
   }
 
   // ---- More button ----
@@ -461,6 +471,7 @@
             "swap",
             "Converter"
           ],
+          ["Reports", "trend", () => openPage("Reports", b => { b.appendChild(rSection); renderReports(); })],
           ["Notes", "note"]
         ]
       ]
