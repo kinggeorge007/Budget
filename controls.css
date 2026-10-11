@@ -1,0 +1,32 @@
+/* Budget controls: look of the custom dropdown button, pickers and small dialog forms. */
+.ctl-hidden{display:none !important}
+
+.ctl-select{display:flex;align-items:center;justify-content:space-between;gap:10px;width:100%;min-height:48px;padding:0 14px;background:var(--card);color:var(--text);border:1px solid var(--line);border-radius:14px;font:inherit;font-size:1rem;font-weight:400;text-align:left;cursor:pointer}
+.ctl-select .ctl-sel-text{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ctl-select::after{content:"";flex:none;width:7px;height:7px;border-right:1.5px solid var(--muted);border-bottom:1.5px solid var(--muted);transform:rotate(45deg);margin-top:-3px}
+.ctl-select:disabled{opacity:.5}
+.ctl-select.ctl-month{width:auto;max-width:48vw;min-height:38px;padding:0 12px 0 14px;border-radius:999px;font-size:.85rem;border-color:var(--text)}
+
+/* pickers (inside the bottom sheet) */
+.pk{padding:2px 4px 10px}
+.pk-head{display:flex;align-items:center;justify-content:space-between;padding:0 4px 10px}
+.pk-nav{width:44px;height:44px;min-height:0;padding:0;border:0;border-radius:50%;background:transparent;color:var(--text);font-size:1.5rem;line-height:1}
+.pk-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.pk-grid.pk-months{grid-template-columns:repeat(3,1fr)}
+.pk-grid.pk-six{grid-template-columns:repeat(6,1fr)}
+.pk-wd{text-align:center;font-size:.72rem;color:var(--muted);padding:6px 0}
+.pk-day{min-height:44px;padding:0;border:0;border-radius:50%;background:transparent;color:var(--text);font:inherit;font-size:.95rem}
+.pk-months .pk-day{border-radius:14px}
+.pk-day.today{box-shadow:inset 0 0 0 1px var(--muted)}
+.pk-day.sel{background:var(--text);color:var(--bg)}
+.pk-label{font-size:.75rem;color:var(--muted);margin:10px 4px 4px}
+.pk-ap{display:flex;gap:8px;margin-top:12px}
+.pk-ap button{flex:1}
+.pk-ap button.on{background:var(--text);color:var(--bg);border-color:var(--text)}
+.pk-foot{display:flex;gap:10px;margin-top:14px}
+.pk-foot button{flex:1}
+
+/* small forms inside dialogs (rename, edit item) */
+.ctl-form{display:grid;gap:12px}
+.ctl-form label{display:grid;gap:6px;color:var(--muted);font-size:.8rem}
+.ctl-form input{width:100%;min-height:48px;padding:0 12px;border:1px solid var(--line);border-radius:12px;background:var(--card);color:var(--text);font:inherit;font-size:1rem}

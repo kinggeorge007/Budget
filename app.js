@@ -207,7 +207,7 @@ $("importFile").addEventListener("change", e => {
   const file = e.target.files[0];
   if (!file) return;
   const reader = new FileReader();
-  reader.onload = () => {
+  reader.onload = async () => {
     try {
       const d = JSON.parse(reader.result);
       if (!d || !Array.isArray(d.transactions)) throw new Error("bad file");
@@ -220,7 +220,7 @@ $("importFile").addEventListener("change", e => {
         category: t.category.slice(0, 50),
         note: typeof t.note === "string" ? t.note.slice(0, 100) : ""
       }));
-      if (!confirm("This will REPLACE your current data with " + good.length + " transactions from the backup. Continue?")) return;
+      if (!(await askConfirm("This will REPLACE your current data with " + good.length + " transactions from the backup. Continue?"))) { e.target.value = ""; return; }
       const extras = {};
       if (typeof cleanBudgets === "function") extras.budgets = cleanBudgets(d.budgets);
       if (typeof cleanBills === "function") {

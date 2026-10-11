@@ -159,8 +159,8 @@ function renderSavings() {
         lbl.className = "bInfo";
         lbl.textContent = niceDate(c.date) + (c.time ? " " + niceTime(c.time) : "") +
           (c.note ? " · " + c.note : "") + " · " + formatKobo(c.amount);
-        line.append(lbl, gBtn("Delete", "del", () => {
-          if (confirm("Delete this contribution?")) {
+        line.append(lbl, gBtn("Delete", "del", async () => {
+          if ((await askConfirm("Delete this contribution?"))) {
             g.contribs = g.contribs.filter(x => x.id !== c.id);
             saveData(); render();
           }
@@ -170,8 +170,8 @@ function renderSavings() {
 
     const btns = document.createElement("div");
     btns.className = "bBtns";
-    btns.appendChild(gBtn("Delete goal", "warn", () => {
-      if (confirm("Delete this goal and all its contributions? The money will return to your spendable cash balance.")) {
+    btns.appendChild(gBtn("Delete goal", "warn", async () => {
+      if ((await askConfirm("Delete this goal and all its contributions? The money will return to your spendable cash balance."))) {
         data.goals = data.goals.filter(x => x.id !== g.id);
         saveData(); render();
       }

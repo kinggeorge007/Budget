@@ -92,7 +92,7 @@ function buildPad(parent, opts) {
     b.type = "button";
     if (k === "⌫") {
       b.setAttribute("aria-label", "Delete");
-      b.onclick = () => { if (!off) { entry = entry.slice(0, -1); draw(); } };
+      b.onclick = async () => { if (!off) { entry = entry.slice(0, -1); draw(); } };
     } else if (k !== "") {
       b.onclick = () => press(k);
     }
@@ -142,9 +142,9 @@ const lockPad = buildPad(lockDlg, { title: "Enter your PIN", onComplete: tryUnlo
 const forgot = mkEl("button", "secondary", "Forgot PIN?");
 forgot.type = "button";
 forgot.style.marginTop = "18px";
-forgot.onclick = () => {
-  if (!confirm("A forgotten PIN cannot be recovered. To continue you must ERASE all SalaryPlan data on this phone and then restore from a backup file. Erase now?")) return;
-  if (!confirm("Last chance: erase everything on this phone?")) return;
+forgot.onclick = async () => {
+  if (!(await askConfirm("A forgotten PIN cannot be recovered. To continue you must ERASE all SalaryPlan data on this phone and then restore from a backup file. Erase now?"))) return;
+  if (!(await askConfirm("Last chance: erase everything on this phone?"))) return;
   lsDel(KEY);
   ["sp_pin", "sp_pin_fail", "sp_pin_until"].forEach(lsDel);
   location.reload();

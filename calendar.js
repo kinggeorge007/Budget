@@ -259,8 +259,8 @@ function eventForm(body, id, dateDefault) {
   );
   body.appendChild(bar);
   if (ev) {
-    const del = cb("Delete event", "secondary", () => {
-      if (!confirm("Delete this event?")) return;
+    const del = cb("Delete event", "secondary", async () => {
+      if (!(await askConfirm("Delete this event?"))) return;
       data.budgets._events = getEvents().filter(x => x.id !== ev.id);
       saveData();
       openPage("Calendar", calendarPage);

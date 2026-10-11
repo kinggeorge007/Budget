@@ -131,9 +131,9 @@ function switchTo(id) {
   if (id === "personal") lsDel("sp_data_key"); else lsSet("sp_data_key", "sp_biz_" + id);
   location.reload();
 }
-function askSwitch(id, name) {
+async function askSwitch(id, name) {
   if (id === wsActiveId) return;
-  if (confirm("Switch to " + name + "?\n\nThe app reloads. If you use a PIN, you'll enter it again.")) switchTo(id);
+  if ((await askConfirm("Switch to " + name + "?\n\nThe app reloads. If you use a PIN, you'll enter it again."))) switchTo(id);
 }
 
 // ---- Pages ----
@@ -287,7 +287,7 @@ function businessForm(body, id) {
   const save = mkEl("button", "primary", e ? "Save changes" : "Create business");
   save.type = "button";
   save.style.cssText = "width:100%";
-  save.onclick = () => {
+  save.onclick = async () => {
     const name = nameIn.value.trim();
     if (!name) { alert("Please enter the business name."); return; }
     const rec = { name: name, type: typeSel.value, desc: descIn.value.trim(), phone: phoneIn.value.trim(), email: emailIn.value.trim(),
@@ -310,7 +310,7 @@ function businessForm(body, id) {
     all.push(Object.assign({ id: nid, archived: false, created: new Date().toISOString() }, rec));
     wsSaveList(all);
     lsSet("sp_biz_" + nid, JSON.stringify({ version: 1, transactions: [], budgets: oc ? { _opening: oc } : {} }));
-    if (confirm("Business created. Switch to it now?")) switchTo(nid);
+    if ((await askConfirm("Business created. Switch to it now?"))) switchTo(nid);
     else openPage("Workspaces", workspacePage);
   };
   body.appendChild(save);
@@ -328,8 +328,8 @@ function businessForm(body, id) {
       const ar = mkEl("button", "secondary", "Archive this business");
       ar.type = "button";
       ar.style.cssText = "width:100%;margin-top:8px;color:var(--danger)";
-      ar.onclick = () => {
-        if (!confirm("Archive " + e.name + "?\n\nNothing is deleted. You can restore it any time.")) return;
+      ar.onclick = async () => {
+        if (!(await askConfirm("Archive " + e.name + "?\n\nNothing is deleted. You can restore it any time."))) return;
         const all = wsList();
         all.find(w => w.id === e.id).archived = true;
         wsSaveList(all);
@@ -374,12 +374,12 @@ wsFile.onchange = () => {
   const f = wsFile.files[0];
   if (!f) return;
   const rd = new FileReader();
-  rd.onload = () => {
+  rd.onload = async () => {
     try {
       const b = JSON.parse(rd.result);
       if (!b || b.format !== "salaryplan-workspaces") throw new Error("format");
       const names = (Array.isArray(b.list) ? b.list.length : 0);
-      if (!confirm("This REPLACES Personal and all " + names + " business(es) on this phone with the file's contents. Continue?")) { wsFile.value = ""; return; }
+      if (!(await askConfirm("This REPLACES Personal and all " + names + " business(es) on this phone with the file's contents. Continue?"))) { wsFile.value = ""; return; }
       const personal = cleanWorkspaceData(b.personal);
       if (personal) lsSet("salaryplan_data_v1", JSON.stringify(personal));
       const list = [];
@@ -397,8 +397,8 @@ wsFile.onchange = () => {
       lsSet("sp_ws_personal_cur", FX_CODES[b.personalCurrency] ? b.personalCurrency : "NGN");
       lsSet("sp_cur", FX_CODES[b.personalCurrency] ? b.personalCurrency : "NGN");
       lsDel("sp_data_key");
-      alert("Restored. The app will reload into Personal.");
-      location.reload();
+      showToast("Restored. Reloading into Personal...");
+      setTimeout(() => location.reload(), 1300);
     } catch (err) {
       alert("That file is not a valid SalaryPlan all-workspaces backup.");
     }

@@ -147,8 +147,8 @@ function renderBills() {
         b.active = !b.active;
         saveData(); renderBills();
       }),
-      mkBtn("Delete", "warn", () => {
-        if (confirm("Delete this bill? Payments you already recorded stay in your transactions.")) {
+      mkBtn("Delete", "warn", async () => {
+        if ((await askConfirm("Delete this bill? Payments you already recorded stay in your transactions."))) {
           data.bills = data.bills.filter(x => x.id !== b.id);
           saveData(); renderBills();
         }
@@ -193,8 +193,8 @@ function renderBills() {
       amt.textContent = formatKobo(tx.amount);
       row.className = "bRow ok";
       info.textContent = "Due " + niceDue + " · Paid";
-      btns.appendChild(mkBtn("Mark unpaid", "", () => {
-        if (!confirm("Mark as unpaid? This also removes the expense recorded for this payment.")) return;
+      btns.appendChild(mkBtn("Mark unpaid", "", async () => {
+        if (!(await askConfirm("Mark as unpaid? This also removes the expense recorded for this payment."))) return;
         data.transactions = data.transactions.filter(t => t.id !== txId);
         delete data.billPayments[month][b.id];
         saveData(); render();

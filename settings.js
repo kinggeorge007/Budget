@@ -168,7 +168,7 @@ function settingsPage(body) {
   ]);
   const rb = mkEl("button", "secondary", "Refresh app files");
   rb.type = "button";
-  rb.onclick = () => {
+  rb.onclick = async () => {
     const done = () => location.reload();
     const clear = () => (window.caches
       ? caches.keys().then(ks => Promise.all(ks.map(k => caches.delete(k))))
@@ -186,9 +186,9 @@ function settingsPage(body) {
   const eb = mkEl("button", "pDanger", "Erase all my data");
   eb.type = "button";
   eb.style.minHeight = "48px";
-  eb.onclick = () => {
-    if (!confirm("Erase ALL your SalaryPlan data on this phone? This cannot be undone.")) return;
-    if (!confirm("Last chance: really erase everything?")) return;
+  eb.onclick = async () => {
+    if (!(await askConfirm("Erase ALL your SalaryPlan data on this phone? This cannot be undone."))) return;
+    if (!(await askConfirm("Last chance: really erase everything?"))) return;
     try { localStorage.removeItem(KEY); } catch (e) {}
     location.reload();
   };

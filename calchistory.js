@@ -96,8 +96,8 @@ calculatorPage = function (body) {
   }
 
   close.onclick = () => panel.classList.remove("open");
-  clear.onclick = () => {
-    if (confirm("Clear all calculator history?")) { chSave([]); drawHist(); }
+  clear.onclick = async () => {
+    if ((await askConfirm("Clear all calculator history?"))) { chSave([]); drawHist(); }
   };
 
   const hb = mkEl("button", "secondary", "History");

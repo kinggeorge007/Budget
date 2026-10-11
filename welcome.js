@@ -142,7 +142,7 @@ function closeRecovery() {
   recMsg.textContent = "";
 }
 
-forgot.onclick = () => {
+forgot.onclick = async () => {
   padWrapEl.style.display = "none";
   forgot.style.display = "none";
   recPanel.style.display = "block";
@@ -152,9 +152,9 @@ forgot.onclick = () => {
 };
 recBack.onclick = closeRecovery;
 
-recErase.onclick = () => {
-  if (!confirm("This ERASES all SalaryPlan data on this phone. You can restore it later from a backup file. Continue?")) return;
-  if (!confirm("Last chance: erase everything on this phone?")) return;
+recErase.onclick = async () => {
+  if (!(await askConfirm("This ERASES all SalaryPlan data on this phone. You can restore it later from a backup file. Continue?"))) return;
+  if (!(await askConfirm("Last chance: erase everything on this phone?"))) return;
   lsDel(KEY);
   ["sp_pin", "sp_pin_fail", "sp_pin_until", "sp_recov"].forEach(lsDel);
   location.reload();

@@ -198,13 +198,13 @@ function renderBudget() {
       edit.type = "button";
       edit.className = "iEdit";
       edit.textContent = "Edit";
-      edit.onclick = () => {
-        const n = prompt("Item name", it.name);
-        if (n === null) return;
-        const a = prompt("Amount (₦)", (it.amount / 100).toFixed(2));
-        if (a === null) return;
-        const nm = n.trim().slice(0, 50);
-        const k = toKobo(a);
+      edit.onclick = async () => {
+        const f = await askForm({ title: "Edit item", fields: [
+          { key: "name", label: "Item name", value: it.name, max: 50 },
+          { key: "amount", label: "Price", value: (it.amount / 100).toFixed(2), money: true }] });
+        if (!f) return;
+        const nm = String(f.name).trim().slice(0, 50);
+        const k = toKobo(f.amount);
         if (!nm || !k) { alert("Both a name and an amount greater than zero are needed."); return; }
         setItems(month, cat, itemsFor(month, cat).map(x => x.id === it.id ? { id: x.id, name: nm, amount: k } : x));
       };
@@ -213,8 +213,8 @@ function renderBudget() {
       del.type = "button";
       del.className = "iDel";
       del.textContent = "Delete";
-      del.onclick = () => {
-        if (confirm("Delete " + it.name + "?")) {
+      del.onclick = async () => {
+        if ((await askConfirm("Delete " + it.name + "?"))) {
           setItems(month, cat, itemsFor(month, cat).filter(x => x.id !== it.id));
         }
       };
@@ -296,7 +296,7 @@ function renderBudget() {
   updateTotals();
 }
 
-document.getElementById("bCopy").addEventListener("click", () => {
+document.getElementById("bCopy").addEventListener("click", async () => {
   const month = $("month").value;
   if (!month) return;
   if (!data.budgets) data.budgets = {};
@@ -306,7 +306,7 @@ document.getElementById("bCopy").addEventListener("click", () => {
     return;
   }
   const cur = data.budgets[month];
-  if (cur && Object.keys(cur).length && !confirm("This will replace the budget already set for this month. Continue?")) return;
+  if (cur && Object.keys(cur).length && !(await askConfirm("This will replace the budget already set for this month. Continue?"))) return;
   data.budgets[month] = Object.assign({}, prev);
   if (!data.budgets._items) data.budgets._items = {};
   const prevItems = data.budgets._items[prevMonth(month)];

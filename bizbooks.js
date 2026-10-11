@@ -214,15 +214,15 @@ if (typeof wsEntry !== "undefined" && wsEntry) {
       top.append(mkEl("strong", "", a.name), mkEl("strong", "", formatKobo(bal[a.id])));
       const bar = mkEl("div", "nBar");
       bar.append(
-        cb("Rename", "secondary", () => {
-          const n = prompt("Account name", a.name);
+        cb("Rename", "secondary", async () => {
+          const n = await askText({ title: "Rename account", label: "Account name", value: a.name, max: 40 });
           if (n && n.trim()) { a.name = n.trim().slice(0, 40); saveData(); fillAcctSel(); openPage("Accounts", accountsPage); }
         }),
-        cb("Delete", "secondary", () => {
+        cb("Delete", "secondary", async () => {
           const used = Object.keys(bkMeta()).some(k => bkMeta()[k] === a.id) || bkMoves().some(m => m.acct === a.id || m.acct2 === a.id);
           if (i === 0) { alert("The first account is the default and can't be deleted."); return; }
           if (used || bal[a.id] !== 0) { alert("This account has records or a balance, so it can't be deleted. Rename it instead."); return; }
-          if (confirm("Delete " + a.name + "?")) {
+          if ((await askConfirm("Delete " + a.name + "?"))) {
             bkData()._accts = bkAccts().filter(x => x.id !== a.id);
             saveData(); fillAcctSel(); openPage("Accounts", accountsPage);
           }
@@ -299,8 +299,8 @@ if (typeof wsEntry !== "undefined" && wsEntry) {
       top.appendChild(left);
       r.appendChild(top);
       const bar = mkEl("div", "nBar");
-      bar.appendChild(cb("Delete", "secondary", () => {
-        if (!confirm("Delete this record?")) return;
+      bar.appendChild(cb("Delete", "secondary", async () => {
+        if (!(await askConfirm("Delete this record?"))) return;
         data.budgets._moves = bkMoves().filter(x => x.id !== m.id);
         saveData(); render();
         openPage(transfer ? "Transfers" : "Owner and loans", p => movesPage(p, mode));
@@ -368,8 +368,8 @@ if (typeof wsEntry !== "undefined" && wsEntry) {
       r.appendChild(top);
       const bar = mkEl("div", "nBar");
       if (!paid) {
-        bar.appendChild(cb("Mark paid today", "secondary", () => {
-          if (!confirm("Record this as " + (inv ? "income (Customer payments)" : "an expense (" + (d.cat || "Other") + ")") + " paid today?")) return;
+        bar.appendChild(cb("Mark paid today", "secondary", async () => {
+          if (!(await askConfirm("Record this as " + (inv ? "income (Customer payments)" : "an expense (" + (d.cat || "Other") + ")") + " paid today?"))) return;
           const tx = { id: newId(), type: inv ? "income" : "expense", amount: d.amount, date: today(), time: nowTime(),
             category: inv ? "Customer payments" : (d.cat || "Other"), note: d.party + (inv ? " (invoice payment)" : " (supplier bill)") };
           data.transactions.push(tx);
@@ -377,14 +377,14 @@ if (typeof wsEntry !== "undefined" && wsEntry) {
           d.paid = true; d.paidDate = today(); d.tx = tx.id;
           saveData(); render(); again();
         }));
-        bar.appendChild(cb("Delete", "secondary", () => {
-          if (!confirm("Delete this " + (inv ? "invoice" : "bill") + "?")) return;
+        bar.appendChild(cb("Delete", "secondary", async () => {
+          if (!(await askConfirm("Delete this " + (inv ? "invoice" : "bill") + "?"))) return;
           data.budgets._docs = bkDocs().filter(x => x.id !== d.id);
           saveData(); again();
         }));
       } else {
-        bar.appendChild(cb("Mark unpaid", "secondary", () => {
-          if (!confirm("Mark as unpaid? This also removes the transaction recorded for the payment.")) return;
+        bar.appendChild(cb("Mark unpaid", "secondary", async () => {
+          if (!(await askConfirm("Mark as unpaid? This also removes the transaction recorded for the payment."))) return;
           data.transactions = data.transactions.filter(t => t.id !== d.tx);
           delete bkMeta()[d.tx];
           d.paid = false; d.paidDate = ""; d.tx = "";
