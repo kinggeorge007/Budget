@@ -1,5 +1,5 @@
 "use strict";
-const CACHE = "budget-v3";
+const CACHE = "budget-v4";
 const FILES = [
   "./",
   "index.html",
@@ -65,20 +65,44 @@ self.addEventListener("activate", e => {
   );
 });
 
+// Pages: network first (so new versions arrive), falling back to the saved copy if the network is slow.
+// Everything else: saved copy first, so a refresh is instant even on a slow connection.
+function networkFirst(req) {
+  return new Promise(resolve => {
+    let done = false;
+    const timer = setTimeout(() => {
+      caches.match(req, { ignoreSearch: true }).then(r => { if (r && !done) { done = true; resolve(r); } });
+    }, 4000);
+    fetch(req, { cache: "no-cache" }).then(res => {
+      clearTimeout(timer);
+      if (res.ok) { const c = res.clone(); caches.open(CACHE).then(ca => ca.put(req, c)); }
+      if (!done) { done = true; resolve(res); }
+    }).catch(() => {
+      clearTimeout(timer);
+      caches.match(req, { ignoreSearch: true }).then(r => {
+        if (!done) { done = true; resolve(r || caches.match("index.html")); }
+      });
+    });
+  });
+}
+
+function cacheFirst(req, versioned) {
+  return caches.match(req).then(hit => {
+    if (hit && versioned) return hit;                       // versioned files never change under the same address
+    const net = fetch(req).then(res => {
+      if (res.ok) { const c = res.clone(); caches.open(CACHE).then(ca => ca.put(req, c)); }
+      return res;
+    }).catch(() => null);
+    if (hit) return hit;                                    // unversioned: serve now, refresh for next time
+    return net.then(r => r || caches.match(req, { ignoreSearch: true }));
+  });
+}
+
 self.addEventListener("fetch", e => {
   const req = e.request;
-  if (req.method !== "GET" || new URL(req.url).origin !== location.origin) return;
-  e.respondWith(
-    fetch(req, { cache: "no-cache" })
-      .then(res => {
-        if (res.ok) {
-          const copy = res.clone();
-          caches.open(CACHE).then(c => c.put(req, copy));
-        }
-        return res;
-      })
-      .catch(() =>
-        caches.match(req, { ignoreSearch: true }).then(r => r || caches.match("index.html"))
-      )
-  );
+  if (req.method !== "GET") return;
+  const url = new URL(req.url);
+  if (url.origin !== location.origin) return;
+  const isPage = req.mode === "navigate" || url.pathname.endsWith("/") || url.pathname.endsWith("index.html");
+  e.respondWith(isPage ? networkFirst(req) : cacheFirst(req, url.search.indexOf("v=") > -1));
 });
