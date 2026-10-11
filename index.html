@@ -11,6 +11,7 @@
 <link rel="icon" type="image/png" sizes="32x32" href="favicon-32.png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
 <style>
+html:not(.sp-ready) body{visibility:hidden}
 :root{--bg:#FFFFFF;--card:#FFFFFF;--text:#171717;--muted:#777777;--line:#EAEAEA;--accent:#171717;--accent2:#171717;--danger:#D97979}
 html,body{background:#FFFFFF;color:#171717}
 html[data-theme="dark"],html[data-theme="dark"] body{background:#1C1C1E;color:#F3F3F1}
@@ -140,5 +141,13 @@ if ("serviceWorker" in navigator) {
 <link rel="stylesheet" href="minimal.css?v=4">
 <link rel="stylesheet" href="foundation.css?v=4">
 <link rel="stylesheet" href="controls.css?v=1">
+<script>
+/* Show the page only when every stylesheet has arrived, so the old base look never flashes. */
+(function () {
+  function show() { document.documentElement.classList.add("sp-ready"); }
+  if (document.readyState === "complete") show(); else window.addEventListener("load", show);
+  setTimeout(show, 6000);
+})();
+</script>
 </body>
 </html>
